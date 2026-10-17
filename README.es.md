@@ -2,7 +2,7 @@
 
 **Descubre cómo hablan de tu marca ChatGPT, Claude, Perplexity y Google IA, sin salir del escritorio de WordPress.**
 
-🇬🇧 **[Read in English](README.md)**
+🇬🇧 **[Read in English](README.md)** · 📖 **[Documentación completa](docs/es/README.md)**
 
 Plugin gratuito para WordPress que añade un widget de **Visibilidad en IA** al Escritorio, con los datos de tu proyecto de [Mencoro](https://mencoro.com/). Las métricas de GEO (optimización para motores generativos) suelen vivir en una herramienta aparte que nadie abre. Este plugin las pone donde el dueño de la web, sus editores y tus clientes ya miran cada día.
 

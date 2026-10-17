@@ -7,7 +7,7 @@
 ![PHP 7.4+](https://img.shields.io/badge/PHP-7.4%2B-777bb4)
 ![No JavaScript](https://img.shields.io/badge/JavaScript-none-success)
 
-🇪🇸 **[Leer en español](README.es.md)**
+🇪🇸 **[Leer en español](README.es.md)** · 📖 **[Full documentation](docs/en/README.md)**
 
 A free WordPress plugin that adds an **AI visibility** widget to the Dashboard, fed by your [Mencoro](https://mencoro.com/) project. Generative Engine Optimization (GEO) numbers usually live in a separate tool nobody opens; this puts them where site owners, editors and clients already look every day.
 

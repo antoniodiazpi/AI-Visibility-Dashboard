@@ -87,6 +87,9 @@ class AIVD_Admin {
 					$changes['api_key'] = substr( $key, 0, 255 );
 				}
 			}
+		} else {
+			// The key now comes from wp-config.php or the environment: drop any copy left in the database.
+			$changes['api_key'] = '';
 		}
 
 		if ( isset( $_POST['aivd_project'] ) ) {
