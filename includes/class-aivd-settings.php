@@ -18,7 +18,7 @@ class AIVD_Settings {
 	const OPTION = 'aivd_settings';
 
 	/**
-	 * Option that versions the cache. Bumping it invalidates every cached payload,
+	 * Option that versions the cached project list. Bumping it invalidates it,
 	 * which also works on sites whose transients live in an object cache.
 	 */
 	const CACHE_VERSION_OPTION = 'aivd_cache_version';
@@ -178,10 +178,11 @@ class AIVD_Settings {
 	}
 
 	/**
-	 * Invalidates every cached payload.
+	 * Invalidates every cached payload and the cached project list.
 	 */
 	public static function flush_cache() {
 		update_option( self::CACHE_VERSION_OPTION, self::cache_version() + 1, false );
+		AIVD_Data::purge();
 	}
 
 	/**

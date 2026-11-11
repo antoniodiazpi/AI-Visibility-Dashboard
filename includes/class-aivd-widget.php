@@ -46,6 +46,9 @@ class AIVD_Widget {
 
 	/**
 	 * Widget body.
+	 *
+	 * Never waits for Mencoro when there is something to show: out-of-date data
+	 * is shown with its age while an update runs in the background.
 	 */
 	public static function render() {
 		echo '<div class="aivd">';
@@ -57,20 +60,20 @@ class AIVD_Widget {
 		}
 
 		$range = self::current_range();
-		$data  = AIVD_Data::get( $range );
+		$state = AIVD_Data::state( $range );
+		$data  = $state['payload'];
 
-		if ( is_wp_error( $data ) ) {
+		if ( ! is_array( $data ) ) {
 			self::render_header( null, $range );
-			echo '<div class="aivd-state aivd-state--error" role="alert"><p>' . esc_html( $data->get_error_message() ) . '</p><p>';
-			self::render_refresh_link( $range, __( 'Try again', 'ai-visibility-dashboard' ) );
-			if ( current_user_can( 'manage_options' ) ) {
-				echo ' · <a href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Settings', 'ai-visibility-dashboard' ) . '</a>';
-			}
-			echo '</p></div></div>';
+			self::render_flash();
+			self::render_no_data( $state, $range );
+			echo '</div>';
 			return;
 		}
 
 		self::render_header( $data, $range );
+		self::render_flash();
+		self::render_status( $state, $range );
 
 		if ( ! empty( $data['no_ai_engine'] ) ) {
 			$message = ! empty( $data['no_selected'] )
@@ -83,7 +86,7 @@ class AIVD_Widget {
 		}
 
 		if ( null === $data['kpis']['share_of_voice']['value'] && null === $data['kpis']['mention_rate']['value'] ) {
-			echo '<div class="aivd-state"><p>' . esc_html__( 'No AI answers were checked in this period yet. Mencoro checks most queries once a day: come back tomorrow or choose a longer period.', 'ai-visibility-dashboard' ) . '</p></div>';
+			echo '<div class="aivd-state"><p>' . esc_html__( 'No AI answers were checked in this period yet, so there is nothing to measure. Mencoro checks most queries once a day: come back tomorrow or choose a longer period.', 'ai-visibility-dashboard' ) . '</p></div>';
 			self::render_footer( $data, $range );
 			echo '</div>';
 			return;
@@ -94,6 +97,7 @@ class AIVD_Widget {
 		}
 
 		self::render_kpis( $data );
+		self::render_sample( $data );
 		self::render_series( $data );
 		self::render_competitors( $data );
 		self::render_sentiment( $data );
@@ -103,6 +107,116 @@ class AIVD_Widget {
 		self::render_footer( $data, $range );
 
 		echo '</div>';
+	}
+
+	/**
+	 * Nothing to show yet: either the first update is running or it failed.
+	 *
+	 * @param array $state AIVD_Data::state().
+	 * @param int   $range Window in days.
+	 */
+	private static function render_no_data( array $state, $range ) {
+		if ( 'pending' === $state['status'] ) {
+			echo '<div class="aivd-state" role="status"><p>' . esc_html__( 'Your data is on its way from Mencoro.', 'ai-visibility-dashboard' ) . '</p><p>';
+			echo '<a href="' . esc_url( add_query_arg( 'aivd_range', $range, admin_url( 'index.php' ) ) . '#' . self::ID ) . '">' . esc_html__( 'Reload in a few seconds', 'ai-visibility-dashboard' ) . '</a>';
+			echo '</p></div>';
+			return;
+		}
+
+		$message = $state['error'] instanceof WP_Error ? $state['error']->get_error_message() : '';
+		echo '<div class="aivd-state aivd-state--error" role="alert"><p>' . esc_html( $message ) . '</p>';
+		if ( $state['retry_at'] > time() ) {
+			echo '<p class="aivd-muted">' . esc_html(
+				sprintf(
+					/* translators: %s: time until the next attempt, e.g. "5 mins". */
+					__( 'Next automatic attempt in %s.', 'ai-visibility-dashboard' ),
+					human_time_diff( time(), $state['retry_at'] )
+				)
+			) . '</p>';
+		}
+		echo '<p>';
+		self::render_refresh_link( $range, __( 'Try again', 'ai-visibility-dashboard' ) );
+		if ( current_user_can( 'manage_options' ) ) {
+			echo ' · <a href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Settings', 'ai-visibility-dashboard' ) . '</a>';
+		}
+		echo '</p></div>';
+	}
+
+	/**
+	 * Out-of-date or incomplete data, said plainly above the figures.
+	 *
+	 * @param array $state AIVD_Data::state().
+	 * @param int   $range Window in days.
+	 */
+	private static function render_status( array $state, $range ) {
+		if ( 'stale' === $state['status'] ) {
+			$parts = array(
+				sprintf(
+					/* translators: %s: age of the data, e.g. "8 hours". */
+					__( 'Last data available, from %s ago.', 'ai-visibility-dashboard' ),
+					human_time_diff( $state['fetched_at'], time() )
+				),
+			);
+			if ( $state['error'] instanceof WP_Error && $state['retry_at'] > time() ) {
+				$parts[] = $state['error']->get_error_message();
+				$parts[] = sprintf(
+					/* translators: %s: time until the next attempt, e.g. "5 mins". */
+					__( 'Next automatic attempt in %s.', 'ai-visibility-dashboard' ),
+					human_time_diff( time(), $state['retry_at'] )
+				);
+			} elseif ( $state['cron_late'] ) {
+				$parts[] = __( 'Automatic updates do not seem to run on this site (WP-Cron). Use Refresh to update now.', 'ai-visibility-dashboard' );
+			} elseif ( $state['refreshing'] ) {
+				$parts[] = __( 'An update is running in the background: reload the Dashboard in a minute to see it.', 'ai-visibility-dashboard' );
+			}
+			echo '<div class="aivd-status aivd-status--stale" role="status"><p>' . esc_html( implode( ' ', $parts ) ) . ' ';
+			self::render_refresh_link( $range, __( 'Refresh now', 'ai-visibility-dashboard' ) );
+			echo '</p></div>';
+			return;
+		}
+
+		if ( $state['partial'] ) {
+			echo '<div class="aivd-status" role="status"><p>' . esc_html__( 'Some sections could not be loaded this time. They will be retried on the next update.', 'ai-visibility-dashboard' ) . '</p></div>';
+		}
+	}
+
+	/**
+	 * One-time message left by the Refresh link.
+	 */
+	private static function render_flash() {
+		$key     = 'aivd_widget_notice_' . get_current_user_id();
+		$message = get_transient( $key );
+		if ( is_string( $message ) && '' !== $message ) {
+			delete_transient( $key );
+			echo '<div class="aivd-status" role="status"><p>' . esc_html( $message ) . '</p></div>';
+		}
+	}
+
+	/**
+	 * What the figures are based on, so they are read as a sample.
+	 *
+	 * @param array $data Payload.
+	 */
+	private static function render_sample( array $data ) {
+		$labels = AIVD_Admin::engine_labels();
+		$names  = array();
+		foreach ( $data['engines'] as $engine ) {
+			$names[] = isset( $labels[ $engine ] ) ? $labels[ $engine ] : $engine;
+		}
+		$text = sprintf(
+			/* translators: 1: number of tracked queries, 2: list of AI engines, 3: first day, 4: last day. */
+			_n(
+				'Based on %1$s tracked query on %2$s, %3$s – %4$s (UTC). The figures describe how these engines answer your tracked queries, not every search.',
+				'Based on %1$s tracked queries on %2$s, %3$s – %4$s (UTC). The figures describe how these engines answer your tracked queries, not every search.',
+				(int) $data['counts']['queries'],
+				'ai-visibility-dashboard'
+			),
+			number_format_i18n( (int) $data['counts']['queries'] ),
+			implode( ', ', $names ),
+			self::date_label( $data['date_from'] ),
+			self::date_label( $data['date_to'] )
+		);
+		echo '<p class="aivd-sample">' . esc_html( $text ) . '</p>';
 	}
 
 	/**
@@ -425,6 +539,19 @@ class AIVD_Widget {
 			return;
 		}
 
+		$shown = count( $data['sources'] );
+		$total = isset( $data['sources_total'] ) ? (int) $data['sources_total'] : 0;
+		if ( $total > $shown ) {
+			echo '<p class="aivd-caption">' . esc_html(
+				sprintf(
+					/* translators: 1: sources listed, 2: all sources cited in the period. */
+					__( 'The %1$s most cited of %2$s sources in this period.', 'ai-visibility-dashboard' ),
+					number_format_i18n( $shown ),
+					number_format_i18n( $total )
+				)
+			) . '</p>';
+		}
+
 		$own_listed = false;
 		echo '<ol class="aivd-list">';
 		foreach ( $data['sources'] as $row ) {
@@ -441,7 +568,13 @@ class AIVD_Widget {
 		}
 		echo '</ol>';
 		if ( ! $own_listed ) {
-			echo '<p class="aivd-tip">' . esc_html__( 'Your site is not among the most cited sources. These are the sites the AI trusts on your topics: getting mentioned on them is often the fastest way in.', 'ai-visibility-dashboard' ) . '</p>';
+			echo '<p class="aivd-note">' . esc_html(
+				sprintf(
+					/* translators: %s: number of sources listed. */
+					__( 'Your site is not in this list, which only shows the top %s. That does not mean it is never cited. Look at the pages cited and whether they cover topics where your content adds value.', 'ai-visibility-dashboard' ),
+					number_format_i18n( $shown )
+				)
+			) . '</p>';
 		}
 		echo '</section>';
 	}
@@ -460,6 +593,7 @@ class AIVD_Widget {
 
 		echo '<section class="aivd-section">';
 		echo '<h3 class="aivd-h">' . esc_html__( 'Queries that moved most', 'ai-visibility-dashboard' ) . '</h3>';
+		echo '<p class="aivd-caption">' . esc_html__( 'Share of Voice against the previous period. Small changes can be noise: AI answers vary from day to day.', 'ai-visibility-dashboard' ) . '</p>';
 		echo '<div class="aivd-movers">';
 		self::render_mover_list( __( 'Gaining', 'ai-visibility-dashboard' ), $up );
 		self::render_mover_list( __( 'Losing', 'ai-visibility-dashboard' ), $down );
@@ -502,10 +636,11 @@ class AIVD_Widget {
 		echo '<details class="aivd-glossary"><summary>' . esc_html__( 'What do these figures mean?', 'ai-visibility-dashboard' ) . '</summary><dl>';
 		$items = array(
 			__( 'Share of Voice', 'ai-visibility-dashboard' ) => __( 'Your share of the brand mentions in AI answers, against the competitors you track in Mencoro. Higher is better.', 'ai-visibility-dashboard' ),
-			__( 'Mention rate', 'ai-visibility-dashboard' ) => __( 'Out of every AI answer checked, how many mention your brand. Higher is better.', 'ai-visibility-dashboard' ),
+			__( 'Mention rate', 'ai-visibility-dashboard' ) => __( 'Out of every AI answer checked, how many mention your brand. Higher is better. Mencoro calls it Coverage.', 'ai-visibility-dashboard' ),
 			__( 'Average position', 'ai-visibility-dashboard' ) => __( 'Where your brand appears inside the answer when it is mentioned. 1 means first. Lower is better.', 'ai-visibility-dashboard' ),
-			__( 'Positivity', 'ai-visibility-dashboard' ) => __( 'Tone of the mentions, from 0 (all negative) to 100 (all positive).', 'ai-visibility-dashboard' ),
+			__( 'Positivity', 'ai-visibility-dashboard' ) => __( 'Tone of the mentions, from 0 (all negative) to 100 (all positive); 50 means they balance out. Mencoro calls it Favorability.', 'ai-visibility-dashboard' ),
 			__( 'pp', 'ai-visibility-dashboard' )         => __( 'Percentage points: the change of a percentage against the previous period of the same length.', 'ai-visibility-dashboard' ),
+			__( 'Sample', 'ai-visibility-dashboard' )     => __( 'Every figure comes from the queries, countries and engines you track in Mencoro. A mention is not a click, a visit or a sale, and a change is a signal to look into, not proof of its cause.', 'ai-visibility-dashboard' ),
 		);
 		foreach ( $items as $term => $definition ) {
 			echo '<dt>' . esc_html( $term ) . '</dt><dd>' . esc_html( $definition ) . '</dd>';

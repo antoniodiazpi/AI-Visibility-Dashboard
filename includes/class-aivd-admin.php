@@ -73,7 +73,8 @@ class AIVD_Admin {
 		}
 		check_admin_referer( 'aivd_save' );
 
-		$changes = array();
+		$changes     = array();
+		$invalid_key = false;
 
 		if ( 'option' === AIVD_Settings::key_source() || '' === AIVD_Settings::key_source() ) {
 			if ( ! empty( $_POST['aivd_remove_key'] ) ) {
@@ -81,10 +82,11 @@ class AIVD_Admin {
 				$changes['organization_id'] = '';
 				$changes['project_id']      = '';
 			} else {
-				// Keys are opaque tokens: keep them as typed, minus whitespace and control characters.
-				$key = isset( $_POST['aivd_api_key'] ) ? preg_replace( '/[\s\x00-\x1F\x7F]+/', '', wp_unslash( $_POST['aivd_api_key'] ) ) : ''; // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- Sanitized by the regular expression.
-				if ( '' !== $key ) {
-					$changes['api_key'] = substr( $key, 0, 255 );
+				$key = isset( $_POST['aivd_api_key'] ) ? self::sanitize_key_input( sanitize_text_field( wp_unslash( $_POST['aivd_api_key'] ) ) ) : '';
+				if ( false === $key ) {
+					$invalid_key = true;
+				} elseif ( '' !== $key ) {
+					$changes['api_key'] = $key;
 				}
 			}
 		} else {
@@ -119,7 +121,9 @@ class AIVD_Admin {
 		AIVD_Settings::update( $changes );
 		AIVD_Settings::flush_cache();
 
-		if ( '' === AIVD_Settings::api_key() ) {
+		if ( $invalid_key ) {
+			self::notice( 'error', __( 'That does not look like a Mencoro API key, so it was not saved. Copy it again from Mencoro: it starts with mencoro_sk_ and has no spaces.', 'ai-visibility-dashboard' ) );
+		} elseif ( '' === AIVD_Settings::api_key() ) {
 			self::notice( 'success', __( 'Settings saved.', 'ai-visibility-dashboard' ) );
 		} else {
 			$me = ( new AIVD_API() )->me();
@@ -137,7 +141,10 @@ class AIVD_Admin {
 	}
 
 	/**
-	 * Clears the cache from the widget's "Refresh" link.
+	 * Updates the data from the widget's "Refresh" link.
+	 *
+	 * One person waiting for one update is fine; several people clicking at
+	 * once, or someone clicking repeatedly, still makes at most one update.
 	 */
 	public static function handle_refresh() {
 		if ( ! current_user_can( AIVD_Settings::widget_capability() ) ) {
@@ -145,11 +152,41 @@ class AIVD_Admin {
 		}
 		check_admin_referer( 'aivd_refresh' );
 
-		AIVD_Settings::flush_cache();
-
 		$range = isset( $_GET['aivd_range'] ) ? AIVD_Settings::range( absint( $_GET['aivd_range'] ) ) : AIVD_Settings::range();
+
+		if ( AIVD_Settings::is_configured() ) {
+			$result   = AIVD_Data::refresh_now( $range );
+			$messages = array(
+				'running'      => __( 'An update was already running. The figures below are the latest available.', 'ai-visibility-dashboard' ),
+				'too_soon'     => __( 'The data was updated less than a minute ago. Try again in a moment.', 'ai-visibility-dashboard' ),
+				'rate_limited' => __( 'Mencoro asked to wait before the next update. The widget will update on its own as soon as it can.', 'ai-visibility-dashboard' ),
+			);
+			if ( isset( $messages[ $result ] ) ) {
+				set_transient( 'aivd_widget_notice_' . get_current_user_id(), $messages[ $result ], MINUTE_IN_SECONDS );
+			}
+		}
+
 		wp_safe_redirect( add_query_arg( 'aivd_range', $range, admin_url( 'index.php' ) ) . '#aivd_widget' );
 		exit;
+	}
+
+	/**
+	 * Validates a pasted API key.
+	 *
+	 * @param string $value Sanitized input.
+	 * @return string|false The key, '' when nothing was typed, false when it cannot be a key.
+	 */
+	private static function sanitize_key_input( $value ) {
+		// Keys are opaque tokens: strip the spaces a copy and paste can add, keep the rest as typed.
+		$value = (string) preg_replace( '/\s+/', '', $value );
+		if ( '' === $value ) {
+			return '';
+		}
+		// Printable ASCII only, so the key can never break the Authorization header.
+		if ( strlen( $value ) < 8 || strlen( $value ) > 255 || ! preg_match( '/^[\x21-\x7E]+$/', $value ) ) {
+			return false;
+		}
+		return $value;
 	}
 
 	/**
@@ -356,17 +393,81 @@ class AIVD_Admin {
 				<?php submit_button( __( 'Save and check connection', 'ai-visibility-dashboard' ) ); ?>
 			</form>
 
-			<h2><?php esc_html_e( 'Privacy', 'ai-visibility-dashboard' ); ?></h2>
-			<p class="aivd-privacy">
-				<?php
-				printf(
-					/* translators: %s: API host name. */
-					esc_html__( 'The plugin only talks to %s, with your key and in read-only mode. It sends nothing about your site or your visitors, adds nothing to the front end and loads no external scripts.', 'ai-visibility-dashboard' ),
-					'<code>' . esc_html( (string) wp_parse_url( AIVD_API::base_url(), PHP_URL_HOST ) ) . '</code>'
-				);
-				?>
-			</p>
+			<?php
+			if ( AIVD_Settings::is_configured() ) {
+				self::render_status();
+			}
+			?>
+
+			<h2><?php esc_html_e( 'External service and privacy', 'ai-visibility-dashboard' ); ?></h2>
+			<div class="aivd-privacy">
+				<p>
+					<?php
+					printf(
+						/* translators: %s: API host name. */
+						esc_html__( 'This plugin shows data from Mencoro, an external service. It only talks to %s, with your key and in read-only mode, and only from the admin.', 'ai-visibility-dashboard' ),
+						'<code>' . esc_html( (string) wp_parse_url( AIVD_API::base_url(), PHP_URL_HOST ) ) . '</code>'
+					);
+					?>
+				</p>
+				<ul>
+					<li><?php esc_html_e( 'What is sent: your API key (in a request header), the organization and project chosen, the period and the AI engines. Nothing about your site, its content, its users or its visitors.', 'ai-visibility-dashboard' ); ?></li>
+					<li><?php esc_html_e( 'When: when you save this screen, when you open it to list your projects, when the Dashboard data is out of date (every 6 hours by default) and when someone clicks Refresh.', 'ai-visibility-dashboard' ); ?></li>
+					<li><?php esc_html_e( 'What is stored here: these settings and the last figures received, never your visitors\' data. Deleting the plugin removes all of it.', 'ai-visibility-dashboard' ); ?></li>
+					<li><?php esc_html_e( 'Nothing is added to the front end, no external scripts are loaded and no usage data is collected.', 'ai-visibility-dashboard' ); ?></li>
+				</ul>
+				<p>
+					<?php
+					printf(
+						/* translators: %s: link to the Mencoro legal page. */
+						esc_html__( 'Mencoro terms of use and privacy policy: %s. This plugin is independent and is not made by Mencoro.', 'ai-visibility-dashboard' ),
+						'<a href="https://mencoro.com/legal/" target="_blank" rel="noopener noreferrer">mencoro.com/legal</a>'
+					);
+					?>
+				</p>
+			</div>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Health of the connection for the default period, for troubleshooting.
+	 * Shows no data from the project and never the key.
+	 */
+	private static function render_status() {
+		$state  = AIVD_Data::peek( AIVD_Settings::range() );
+		$labels = array(
+			'fresh'   => __( 'Up to date', 'ai-visibility-dashboard' ),
+			'partial' => __( 'Up to date, some sections missing', 'ai-visibility-dashboard' ),
+			'empty'   => __( 'Connected, no data in this period yet', 'ai-visibility-dashboard' ),
+			'stale'   => __( 'Out of date, update pending', 'ai-visibility-dashboard' ),
+			'pending' => __( 'Fetching', 'ai-visibility-dashboard' ),
+			'error'   => __( 'Not updated yet', 'ai-visibility-dashboard' ),
+		);
+		$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
+		$rows   = array(
+			__( 'Status', 'ai-visibility-dashboard' )      => isset( $labels[ $state['status'] ] ) ? $labels[ $state['status'] ] : $state['status'],
+			__( 'Last update', 'ai-visibility-dashboard' ) => $state['fetched_at'] ? wp_date( $format, $state['fetched_at'] ) : __( 'Never', 'ai-visibility-dashboard' ),
+		);
+		if ( $state['error'] instanceof WP_Error && 'aivd_pending' !== $state['error']->get_error_code() ) {
+			$rows[ __( 'Last error', 'ai-visibility-dashboard' ) ] = $state['error']->get_error_message();
+		}
+		if ( $state['retry_at'] > time() ) {
+			$rows[ __( 'Next automatic attempt', 'ai-visibility-dashboard' ) ] = wp_date( $format, $state['retry_at'] );
+		}
+		$rows[ __( 'Background updates', 'ai-visibility-dashboard' ) ] = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON
+			? __( 'WP-Cron is disabled on this site: updates run when your server calls wp-cron.php, or when someone clicks Refresh.', 'ai-visibility-dashboard' )
+			: __( 'Handled by WP-Cron. The Dashboard never waits for Mencoro when it has data to show.', 'ai-visibility-dashboard' );
+		$rows[ __( 'Plugin version', 'ai-visibility-dashboard' ) ]     = AIVD_VERSION;
+		?>
+		<h2><?php esc_html_e( 'Connection status', 'ai-visibility-dashboard' ); ?></h2>
+		<table class="widefat striped aivd-status-table" role="presentation">
+			<tbody>
+				<?php foreach ( $rows as $label => $value ) : ?>
+					<tr><th scope="row"><?php echo esc_html( $label ); ?></th><td><?php echo esc_html( $value ); ?></td></tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
 		<?php
 	}
 }
