@@ -67,7 +67,7 @@ Vuelve a pulsar **Guardar y comprobar la conexión**. Debería aparecer *Ajustes
 
 Ve al **Escritorio**. Ahí está el widget **Visibilidad en IA**; puedes arrastrarlo a otra columna o plegarlo como cualquier otro widget.
 
-La primera carga hace unas pocas peticiones a Mencoro (alrededor de un segundo); después los datos se guardan en caché 6 horas. Para entender cada cifra y qué hacer con ella, lee [Cómo leer el widget](leer-el-widget.md).
+La primera carga hace unas pocas peticiones a Mencoro (alrededor de un segundo); después los datos se consideran recientes 6 horas y se actualizan en segundo plano. Para entender cada cifra y qué hacer con ella, lee [Cómo leer el widget](leer-el-widget.md).
 
 ## Actualizar
 

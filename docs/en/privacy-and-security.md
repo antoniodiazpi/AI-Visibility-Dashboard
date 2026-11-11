@@ -17,7 +17,7 @@ It does **not** send your site's URL, content, users, visitors, IP addresses or 
 
 ### When requests happen
 
-- When someone allowed to see the widget opens the Dashboard and the cached data has expired (every 6 hours, and at the start of each UTC day).
+- When someone allowed to see the widget opens the Dashboard and the data is out of date (every 6 hours, and at the start of each UTC day). The update then runs in the background through WP-Cron; only the very first view, with nothing to show yet, waits for it (12 seconds at most).
 - When someone clicks **Refresh** or **Try again**.
 - When an administrator saves or opens **Settings → AI Visibility** (to check the key and list projects; the project list is cached for 10 minutes).
 
@@ -30,8 +30,10 @@ Mencoro's terms and privacy policy: <https://mencoro.com/legal/>.
 | Data | Where | Notes |
 |---|---|---|
 | Settings and the API key | `wp_options`, option `aivd_settings` | Not autoloaded, so it is not loaded on every page. When the key comes from `wp-config.php` or an environment variable, saving the settings deletes any key stored before. |
-| Cached results | Transients named `aivd_…` | Aggregated metrics, competitor names, cited domains and tracked query texts. No personal data. Expire on their own. |
-| Cache version | `wp_options`, option `aivd_cache_version` | A number bumped by **Refresh**. |
+| Last figures received | `wp_options`, options `aivd_snapshot_…` (at most 6) and the index `aivd_snapshots`, not autoloaded | Aggregated metrics, competitor names, cited domains and tracked query texts, plus the last error. No personal data, never the key. Deleted when the key, project or engines change. |
+| Update lock | `wp_options`, option `aivd_lock_…` | A timestamp that lives while one update runs (2 minutes at most). |
+| Project list, one-time notices | Transients named `aivd_…` | Expire within minutes. |
+| Cache version | `wp_options`, option `aivd_cache_version` | A number bumped when the settings are saved. |
 
 Deleting the plugin from **Plugins** removes all of it, on every site of a multisite network.
 

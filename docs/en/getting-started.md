@@ -67,7 +67,7 @@ Click **Save and check connection** again. You should see *Settings saved. The w
 
 Go to **Dashboard**. The **AI visibility** widget is there; you can drag it to another column or collapse it like any other widget.
 
-The first load makes a few requests to Mencoro (about a second); after that the data is cached for 6 hours. To understand each figure and what to do with it, read [Reading the widget](reading-the-widget.md).
+The first load makes a few requests to Mencoro (about a second); after that the data stays fresh for 6 hours and updates in the background. To understand each figure and what to do with it, read [Reading the widget](reading-the-widget.md).
 
 ## Updating
 

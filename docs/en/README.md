@@ -19,5 +19,5 @@ AI Visibility Dashboard for Mencoro adds an **AI visibility** widget to the Word
 
 - **Do I need Mencoro?** Yes: the plugin shows the data your Mencoro project collects. → [Getting started](getting-started.md#what-you-need)
 - **Can my client see it without the key?** Yes. → [For agencies](agencies.md#show-the-widget-to-the-client-not-the-key)
-- **Does it slow my site down?** No: admin only, no JavaScript, cached for 6 hours. → [Privacy and security](privacy-and-security.md#front-end-and-third-party-code)
+- **Does it slow my site down?** No: admin only, no JavaScript, and the Dashboard never waits for Mencoro when it has data to show. → [Privacy and security](privacy-and-security.md#front-end-and-third-party-code)
 - **Why don't the numbers match Mencoro?** Usually engines, period or cache. → [Troubleshooting](troubleshooting.md#the-numbers-look-different-from-mencoro)

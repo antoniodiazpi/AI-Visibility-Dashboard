@@ -1,0 +1,32 @@
+{
+	"name": "trailseo/ai-visibility-dashboard",
+	"description": "Development tooling for the AI Visibility Dashboard for Mencoro WordPress plugin. The plugin itself has no runtime dependencies.",
+	"type": "wordpress-plugin",
+	"license": "GPL-2.0-or-later",
+	"require": {
+		"php": ">=7.4"
+	},
+	"require-dev": {
+		"dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+		"phpcompatibility/phpcompatibility-wp": "^2.1",
+		"phpunit/phpunit": "^9.6",
+		"wp-coding-standards/wpcs": "^3.1",
+		"wp-phpunit/wp-phpunit": "^6.5 || ^7.0",
+		"yoast/phpunit-polyfills": "^2.0"
+	},
+	"config": {
+		"allow-plugins": {
+			"dealerdirect/phpcodesniffer-composer-installer": true
+		},
+		"sort-packages": true,
+		"platform": {
+			"php": "7.4.33"
+		}
+	},
+	"scripts": {
+		"lint": "find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l",
+		"phpcs": "phpcs --standard=phpcs.xml.dist",
+		"compat": "phpcs --standard=PHPCompatibilityWP --runtime-set testVersion 7.4- --extensions=php --ignore=languages/*,vendor/*,tests/* .",
+		"test": "phpunit"
+	}
+}

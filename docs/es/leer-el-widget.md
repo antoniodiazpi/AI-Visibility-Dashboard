@@ -67,14 +67,14 @@ Cuántas de tus menciones fueron positivas, neutras o negativas, en una barra y 
 
 ## Fuentes que citan las respuestas de IA
 
-Los seis dominios que más han citado las respuestas de IA en el periodo, con su número de citas. Son las webs en las que los motores *confían para tus temas*.
+Los seis dominios que más han citado las respuestas de IA en el periodo, con su número de citas, sobre el total de fuentes citadas. Muestran de dónde sacaron la información las respuestas a *tus consultas seguidas*; que se citen es una correlación, no la prueba de que un motor confíe en esa web.
 
 - Si una es tu web, aparece marcada como **tu web**. "Tu web" es cualquier dominio configurado en el proyecto de Mencoro, o el dominio de este WordPress (con o sin `www.`).
-- Si tu web no está en la lista, un aviso amarillo te lo dice.
+- Si tu web no está en la lista, una nota te lo dice y te recuerda que solo se muestran las seis primeras: puede que se cite más abajo.
 
 **Qué hacer con esto:** suele ser el bloque con más acción.
 
-- **Tu web no aparece:** los motores aprenden sobre tu tema en otros sitios. Conseguir que mencionen tu marca en esos dominios (un artículo, un listado, una comparativa, una cita como experto, una respuesta en una comunidad) suele ser más rápido que esperar a que citen tus páginas.
+- **Tu web no aparece:** revisa las páginas citadas para tus consultas y pregúntate si tu contenido trata esos temas con evidencia propia. Una presencia relevante y genuina en esas webs puede ayudar; comprar o intercambiar enlaces no, y los datos no dicen qué acción moverá la cifra.
 - **Hay un foro o una comunidad arriba:** las preguntas de la gente ahí dan forma a las respuestas. Estar presente de verdad importa más que los enlaces.
 - **Tu web aparece:** averigua qué páginas tuyas se citan (Mencoro puede agrupar las fuentes por página) y mantenlas precisas y al día.
 
@@ -115,6 +115,6 @@ Un glosario plegable al final del widget repite las definiciones de arriba, para
 Hay dos capas:
 
 1. **Mencoro** comprueba tus consultas con la frecuencia que tenga configurada tu proyecto; con la frecuencia diaria habitual, los números se mueven una vez al día.
-2. **El plugin** guarda lo que trae durante 6 horas y empieza de cero cada día UTC. **Actualizar** se salta la espera.
+2. **El plugin** considera recientes los datos durante 6 horas y los actualiza al empezar cada día UTC. Las cifras desactualizadas siguen en pantalla, con su antigüedad, mientras se actualizan en segundo plano. **Actualizar** lo hace al momento (como mucho, una vez cada 30 segundos).
 
 Por eso actualizar muchas veces al día rara vez muestra algo nuevo; sirve justo después de cambiar algo en Mencoro.

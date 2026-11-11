@@ -3,7 +3,7 @@
  * Plugin Name:       AI Visibility Dashboard for Mencoro
  * Plugin URI:        https://github.com/antoniodiazpi/ai-visibility-dashboard
  * Description:       See how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right in the WordPress dashboard. Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, powered by your Mencoro account.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            TrailSEO
@@ -18,13 +18,14 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AIVD_VERSION', '1.0.0' );
+define( 'AIVD_VERSION', '1.0.1' );
 define( 'AIVD_FILE', __FILE__ );
 define( 'AIVD_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AIVD_URL', plugin_dir_url( __FILE__ ) );
 
 require_once AIVD_DIR . 'includes/class-aivd-settings.php';
 require_once AIVD_DIR . 'includes/class-aivd-api.php';
+require_once AIVD_DIR . 'includes/class-aivd-lock.php';
 require_once AIVD_DIR . 'includes/class-aivd-data.php';
 require_once AIVD_DIR . 'includes/class-aivd-widget.php';
 require_once AIVD_DIR . 'includes/class-aivd-admin.php';
@@ -40,6 +41,7 @@ function aivd_load_textdomain() {
 }
 add_action( 'init', 'aivd_load_textdomain' );
 
+AIVD_Data::init();
 AIVD_Admin::init();
 AIVD_Widget::init();
 
@@ -71,3 +73,12 @@ function aivd_activate() {
 	}
 }
 register_activation_hook( AIVD_FILE, 'aivd_activate' );
+
+/**
+ * Removes the scheduled background updates on deactivation. The settings and
+ * the last data stay until the plugin is deleted.
+ */
+function aivd_deactivate() {
+	wp_unschedule_hook( AIVD_Data::CRON_HOOK );
+}
+register_deactivation_hook( AIVD_FILE, 'aivd_deactivate' );

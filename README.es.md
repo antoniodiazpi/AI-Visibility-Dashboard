@@ -59,8 +59,10 @@ Motores: ChatGPT, Claude, Perplexity, Google AI Overviews y Google Modo IA, los 
 - El plugin solo se comunica con `api.mencoro.com`, con tu clave y con peticiones de **solo lectura**. Nunca crea, cambia ni borra nada en Mencoro.
 - No envía nada sobre tu web ni tus visitantes, no añade nada a la parte pública y no carga scripts externos. El widget se genera en el servidor: cero JavaScript.
 - La clave nunca se vuelve a mostrar en la página (solo sus cuatro últimos caracteres) y la opción que la guarda no se carga automáticamente.
-- Los datos se guardan en caché 6 horas (Mencoro revisa casi todas las consultas una vez al día). Cada actualización hace 7 peticiones a la API; los errores se guardan 5 minutos para que una clave mala no sature la API.
-- Al desinstalar se borran los ajustes, la clave y la caché.
+- Los datos se consideran recientes durante 6 horas (Mencoro revisa casi todas las consultas una vez al día). Cada actualización hace 7 peticiones a la API.
+- **El Escritorio nunca espera a Mencoro si tiene algo que mostrar.** Las cifras desactualizadas se muestran con su antigüedad mientras una única actualización en segundo plano (WP-Cron) trae las nuevas. Si Mencoro va lento o está caído, se mantienen las últimas cifras válidas; el plugin respeta `Retry-After` y espera de 1 a 30 minutos ante otros errores. Nunca hay dos actualizaciones a la vez.
+- Los mensajes de error nunca copian lo que respondió la API, no se siguen redirecciones y cada campo se comprueba antes de mostrarlo.
+- Al desinstalar se borran los ajustes, la clave, las cifras guardadas y las actualizaciones programadas, en todos los sitios de una red.
 
 ## Para desarrolladores
 
@@ -68,12 +70,14 @@ Motores: ChatGPT, Claude, Perplexity, Google AI Overviews y Google Modo IA, los 
 |---|---|
 | `MENCORO_API_KEY` (constante o variable de entorno) | Clave de API; tiene prioridad sobre la guardada. |
 | `aivd_widget_capability` (filtro) | Permiso necesario para ver el widget. Por defecto `manage_options`, o `edit_others_posts` si se permite a los editores. |
-| `aivd_cache_ttl` (filtro) | Duración de la caché en segundos. Por defecto `6 * HOUR_IN_SECONDS`. |
-| `aivd_api_base` (filtro) / `AIVD_API_BASE` (constante) | URL base de la API, por ejemplo para probar contra un servidor simulado. |
+| `aivd_cache_ttl` (filtro) | Cuánto tiempo se consideran recientes las cifras, en segundos. Por defecto `6 * HOUR_IN_SECONDS`. |
+| `aivd_http_timeout` (filtro) | Segundos de espera por respuesta (2–30). Por defecto 10. |
+| `aivd_refresh_budget` (filtro) | Segundos que puede esperar una actualización en total: 12 si alguien espera a la página, 25 en segundo plano. |
+| `aivd_api_base` (filtro) / `AIVD_API_BASE` (constante) | URL base de la API, por ejemplo para probar contra un servidor simulado. Debe ser HTTPS, o HTTP en localhost. |
 
 Rutas que usa (todas `GET`, ver la [documentación de la API de Mencoro](https://mencoro.com/api-docs/)): `me`, `organizations`, `projects`, `projects/{id}`, `available-filters`, `metrics`, `timeseries`, `cited-sources`, `metrics/movers`.
 
-Normas de código: `phpcs --standard=phpcs.xml.dist` (WordPress-Extra + WordPress-Docs) pasa sin avisos.
+Normas de código, PHPCompatibility (PHP 7.4+) y una batería PHPUnit sobre la librería de tests de WordPress se ejecutan en CI; consulta [CONTRIBUTING.md](CONTRIBUTING.md). Plugin Check 2.2.0 no informa de errores.
 
 ## Traducciones
 
