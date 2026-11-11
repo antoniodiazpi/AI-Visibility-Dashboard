@@ -8,7 +8,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-11-11T17:23:53+00:00\n"
-"PO-Revision-Date: 2026-11-11T17:31:37+00:00\n"
+"PO-Revision-Date: 2026-11-11T18:33:53+00:00\n"
 "Language: es_ES\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ai-visibility-dashboard\n"
@@ -39,7 +39,7 @@ msgstr "TrailSEO"
 msgid "https://trailseo.com"
 msgstr "https://trailseo.com"
 
-#: ai-visibility-dashboard.php:58
+#: ai-visibility-dashboard.php:50
 #: includes/class-aivd-widget.php:140
 #: includes/class-aivd-widget.php:668
 msgid "Settings"

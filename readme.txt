@@ -42,7 +42,7 @@ The figures describe how these engines answer the queries you track in Mencoro, 
 * The Dashboard never waits for Mencoro when it has something to show: out-of-date figures are shown with their age while they update in the background.
 * If Mencoro is slow or down, the last figures stay on screen and the plugin waits before trying again.
 
-Spanish (Spain) translation included.
+Translation ready: translations are delivered through translate.wordpress.org.
 
 This is an independent plugin built on Mencoro's public API; it is not an official Mencoro product. Source code and documentation: [github.com/antoniodiazpi/AI-Visibility-Dashboard](https://github.com/antoniodiazpi/AI-Visibility-Dashboard).
 
@@ -112,6 +112,7 @@ Use the `aivd_cache_ttl` filter, in seconds.
 * Clearer figures: the period, engines and number of tracked queries are shown next to the numbers, and the cited-sources note no longer overstates what the data shows.
 * Settings: connection status and a full description of the external service.
 * Uninstall also removes stored figures and scheduled updates on every site.
+* Translations now load from translate.wordpress.org language packs, as WordPress does for plugins in the directory.
 
 = 1.0.0 =
 * First release.

@@ -1,0 +1,112 @@
+name: Release
+
+# Builds the plugin zip with `git archive` (only the files WordPress needs,
+# see .gitattributes) and publishes a GitHub release with it.
+#
+# - Push a tag vX.Y.Z, or
+# - run it by hand (Actions → Release → Run workflow) with the version: it
+#   then creates the tag on the chosen branch or commit.
+#
+# The version must match the plugin header, AIVD_VERSION and the Stable tag
+# of readme.txt; the release notes come from that version's changelog entry.
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to release, e.g. 1.0.1'
+        required: true
+      target:
+        description: 'Branch or commit to release'
+        required: false
+        default: main
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      EVENT: ${{ github.event_name }}
+      INPUT_VERSION: ${{ inputs.version }}
+      INPUT_TARGET: ${{ inputs.target }}
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.target || github.ref }}
+
+      - name: Resolve and check the version
+        id: version
+        run: |
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            VERSION="$INPUT_VERSION"
+          else
+            VERSION="${GITHUB_REF_NAME#v}"
+          fi
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::'$VERSION' is not a version like 1.2.3"; exit 1
+          fi
+          HEADER=$(sed -n 's/^ \* Version: *//p' ai-visibility-dashboard.php)
+          CONSTANT=$(sed -n "s/^define( 'AIVD_VERSION', '\(.*\)' );/\1/p" ai-visibility-dashboard.php)
+          STABLE=$(sed -n 's/^Stable tag: *//p' readme.txt)
+          echo "header=$HEADER constant=$CONSTANT stable=$STABLE"
+          if [ "$HEADER" != "$VERSION" ] || [ "$CONSTANT" != "$VERSION" ] || [ "$STABLE" != "$VERSION" ]; then
+            echo "::error::Version mismatch: tag $VERSION, header $HEADER, AIVD_VERSION $CONSTANT, Stable tag $STABLE"; exit 1
+          fi
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "::error::Release v$VERSION already exists"; exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Check PHP syntax
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
+
+      - name: Build the zip
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          ZIP="ai-visibility-dashboard-$VERSION.zip"
+          git archive --format=zip --prefix=ai-visibility-dashboard/ -o "$ZIP" HEAD
+          unzip -Z1 "$ZIP"
+          for dev in tests/ bin/ docs/ .github/ .wordpress-org/ composer.json phpunit.xml.dist; do
+            if unzip -Z1 "$ZIP" | grep -q "^ai-visibility-dashboard/$dev"; then
+              echo "::error::$dev must not be in the zip"; exit 1
+            fi
+          done
+          sha256sum "$ZIP" > "$ZIP.sha256"
+          cat "$ZIP.sha256"
+
+      - name: Write the release notes
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          {
+            awk -v v="= $VERSION =" '$0 == v { on = 1; next } on && /^= / { exit } on' readme.txt
+            echo
+            echo "**Install:** download \`ai-visibility-dashboard-$VERSION.zip\` below (not the \"Source code\" archives), then Plugins → Add New → Upload Plugin."
+            echo
+            echo "SHA-256: \`$(cut -d' ' -f1 "ai-visibility-dashboard-$VERSION.zip.sha256")\`"
+          } > notes.md
+          if [ "$(grep -c '^\* ' notes.md)" -eq 0 ]; then
+            echo "::error::No changelog entry for $VERSION in readme.txt"; exit 1
+          fi
+          cat notes.md
+
+      - name: Publish the release
+        env:
+          VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "v$VERSION" \
+            "ai-visibility-dashboard-$VERSION.zip" \
+            "ai-visibility-dashboard-$VERSION.zip.sha256" \
+            --title "$VERSION" \
+            --notes-file notes.md \
+            --target "$(git rev-parse HEAD)"

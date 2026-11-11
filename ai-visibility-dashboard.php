@@ -30,16 +30,8 @@ require_once AIVD_DIR . 'includes/class-aivd-data.php';
 require_once AIVD_DIR . 'includes/class-aivd-widget.php';
 require_once AIVD_DIR . 'includes/class-aivd-admin.php';
 
-/**
- * Loads the bundled translations.
- *
- * Translations from translate.wordpress.org take precedence when they exist;
- * the files shipped in /languages cover installs from GitHub.
- */
-function aivd_load_textdomain() {
-	load_plugin_textdomain( 'ai-visibility-dashboard', false, dirname( plugin_basename( AIVD_FILE ) ) . '/languages' );
-}
-add_action( 'init', 'aivd_load_textdomain' );
+// Translations are loaded by WordPress itself, just in time, from the language
+// packs of translate.wordpress.org (wp-content/languages/plugins/).
 
 AIVD_Data::init();
 AIVD_Admin::init();
