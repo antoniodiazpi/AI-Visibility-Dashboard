@@ -10,7 +10,7 @@ No build step, no runtime dependencies, no JavaScript. PHP 7.4+, WordPress 6.5+.
 
 ```
 ai-visibility-dashboard/
-├── ai-visibility-dashboard.php   Bootstrap: constants, text domain, activation, action link
+├── ai-visibility-dashboard.php   Bootstrap: constants, activation and deactivation, action link
 ├── includes/
 │   ├── class-aivd-settings.php   Stored settings, key resolution, capability, cache flush
 │   ├── class-aivd-api.php        Read-only HTTP client for the Mencoro API
@@ -145,7 +145,7 @@ The ruleset applies WordPress-Extra, WordPress-Docs, the text domain and the `ai
 phpcs --standard=PHPCompatibility --runtime-set testVersion 7.4- --extensions=php --ignore=languages .
 ```
 
-Rules of the house: escape late, sanitize early, nonces and capability checks on every handler, no direct database queries outside `uninstall.php`, no JavaScript unless it earns its place.
+Rules of the house: escape late, sanitize early, nonces and capability checks on every handler, no direct database queries outside `uninstall.php` and the lock (`AIVD_Lock`, which must bypass the options cache), no JavaScript unless it earns its place.
 
 ## Translations
 
@@ -159,6 +159,8 @@ wp i18n make-php languages
 ```
 
 Commit the `.po`, `.mo` and `.l10n.php` files. Spanish (Spain) uses the informal *tú*, like WordPress core's es_ES.
+
+The plugin does not call `load_plugin_textdomain()`: as recommended for plugins hosted on WordPress.org, WordPress loads the language packs of translate.wordpress.org just in time. The `.po` in `languages/` is the source to import there (Spanish (Spain), project *AI Visibility Dashboard for Mencoro*). On installs from GitHub, the `.mo` and `.l10n.php` files work when copied to `wp-content/languages/plugins/`.
 
 ## Tests
 

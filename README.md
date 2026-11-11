@@ -86,7 +86,9 @@ Coding standards, PHPCompatibility (PHP 7.4+) and a PHPUnit suite on the WordPre
 
 ## Translations
 
-Bundled: English and Spanish (Spain). The text domain is `ai-visibility-dashboard`; a `.pot` template lives in `languages/`. Pull requests with new languages are welcome.
+Source strings are in English. The text domain is `ai-visibility-dashboard`; a `.pot` template and a Spanish (Spain) translation live in `languages/`.
+
+On sites that install the plugin from WordPress.org, WordPress loads translations automatically from the language packs of [translate.wordpress.org](https://translate.wordpress.org/), which is also where new languages are contributed. On installs from this repository, copy `languages/ai-visibility-dashboard-es_ES.mo` and `.l10n.php` to `wp-content/languages/plugins/` to get Spanish.
 
 ## License
 

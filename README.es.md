@@ -81,7 +81,9 @@ Normas de código, PHPCompatibility (PHP 7.4+) y una batería PHPUnit sobre la l
 
 ## Traducciones
 
-Incluye inglés y español de España. El dominio de texto es `ai-visibility-dashboard` y la plantilla `.pot` está en `languages/`. Se agradecen pull requests con nuevos idiomas.
+Los textos de origen están en inglés. El dominio de texto es `ai-visibility-dashboard`; la plantilla `.pot` y la traducción al español de España están en `languages/`.
+
+En los sitios que instalan el plugin desde WordPress.org, WordPress carga las traducciones automáticamente desde los paquetes de idioma de [translate.wordpress.org](https://translate.wordpress.org/), que es también donde se aportan nuevos idiomas. Si instalas desde este repositorio, copia `languages/ai-visibility-dashboard-es_ES.mo` y `.l10n.php` a `wp-content/languages/plugins/` para tenerlo en español.
 
 ## Licencia
 

@@ -10,7 +10,7 @@ Sin compilación, sin dependencias en ejecución, sin JavaScript. PHP 7.4+, Word
 
 ```
 ai-visibility-dashboard/
-├── ai-visibility-dashboard.php   Arranque: constantes, traducciones, activación, enlace de ajustes
+├── ai-visibility-dashboard.php   Arranque: constantes, activación y desactivación, enlace de ajustes
 ├── includes/
 │   ├── class-aivd-settings.php   Ajustes guardados, origen de la clave, permiso, vaciado de caché
 │   ├── class-aivd-api.php        Cliente HTTP de solo lectura para la API de Mencoro
@@ -145,7 +145,7 @@ El conjunto de reglas aplica WordPress-Extra, WordPress-Docs, el dominio de text
 phpcs --standard=PHPCompatibility --runtime-set testVersion 7.4- --extensions=php --ignore=languages .
 ```
 
-Normas de la casa: escapar al final, sanear al principio, nonces y comprobación de permisos en cada manejador, ninguna consulta directa a la base de datos fuera de `uninstall.php`, y nada de JavaScript salvo que se lo gane.
+Normas de la casa: escapar al final, sanear al principio, nonces y comprobación de permisos en cada manejador, ninguna consulta directa a la base de datos fuera de `uninstall.php` y del bloqueo (`AIVD_Lock`, que debe saltarse la caché de opciones), y nada de JavaScript salvo que se lo gane.
 
 ## Traducciones
 
@@ -159,6 +159,8 @@ wp i18n make-php languages
 ```
 
 Sube los archivos `.po`, `.mo` y `.l10n.php`. El español de España tutea, como la traducción oficial de WordPress (es_ES).
+
+El plugin no llama a `load_plugin_textdomain()`: como se recomienda para los plugins alojados en WordPress.org, WordPress carga sobre la marcha los paquetes de idioma de translate.wordpress.org. El `.po` de `languages/` es el que hay que importar allí (español de España, proyecto *AI Visibility Dashboard for Mencoro*). En instalaciones desde GitHub, los archivos `.mo` y `.l10n.php` funcionan si se copian a `wp-content/languages/plugins/`.
 
 ## Tests
 
