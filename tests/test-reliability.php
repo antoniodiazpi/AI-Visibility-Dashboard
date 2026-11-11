@@ -252,6 +252,40 @@ class Test_AIVD_Reliability extends AIVD_Test_Case {
 		$this->assertSame( array( 'series', 'sources', 'movers_up', 'movers_down' ), $state['payload']['failed_sections'] );
 	}
 
+	public function test_partial_data_is_refreshed_sooner() {
+		$this->mock_project( array( '/cited-sources' => self::json( array(), 500 ) ) );
+		$this->assertSame( 'partial', AIVD_Data::state( 28 )['status'] );
+
+		$this->age_snapshots( AIVD_Data::PARTIAL_TTL + 1 );
+		$this->assertSame( 'stale', AIVD_Data::state( 28 )['status'], 'Missing sections are retried long before the 6-hour lifetime.' );
+		$this->assertNotFalse( wp_next_scheduled( AIVD_Data::CRON_HOOK, array( 28 ) ) );
+
+		$this->mock_project();
+		AIVD_Data::run_scheduled_refresh( 28 );
+		$this->assertSame( 'fresh', AIVD_Data::state( 28 )['status'] );
+	}
+
+	public function test_interactive_and_background_budgets_differ() {
+		$seen   = array();
+		$filter = static function ( $budget, $mode ) use ( &$seen ) {
+			$seen[ $mode ] = $budget;
+			return $budget;
+		};
+		add_filter( 'aivd_refresh_budget', $filter, 10, 2 );
+		AIVD_Data::state( 28 );
+		$this->age_snapshots( 7 * HOUR_IN_SECONDS );
+		AIVD_Data::run_scheduled_refresh( 28 );
+		remove_filter( 'aivd_refresh_budget', $filter, 10 );
+
+		$this->assertSame(
+			array(
+				'interactive' => 12,
+				'background'  => 25,
+			),
+			$seen
+		);
+	}
+
 	public function test_no_observations_reports_empty() {
 		$this->mock_project(
 			array(

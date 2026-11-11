@@ -3,7 +3,7 @@
  * Plugin Name:       AI Visibility Dashboard for Mencoro
  * Plugin URI:        https://github.com/antoniodiazpi/ai-visibility-dashboard
  * Description:       See how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right in the WordPress dashboard. Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, powered by your Mencoro account.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Requires at least: 6.5
  * Requires PHP:      7.4
  * Author:            TrailSEO
@@ -18,7 +18,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'AIVD_VERSION', '1.0.0' );
+define( 'AIVD_VERSION', '1.0.1' );
 define( 'AIVD_FILE', __FILE__ );
 define( 'AIVD_DIR', plugin_dir_path( __FILE__ ) );
 define( 'AIVD_URL', plugin_dir_url( __FILE__ ) );

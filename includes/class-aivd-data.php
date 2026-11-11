@@ -43,6 +43,11 @@ class AIVD_Data {
 	const LOCK_TTL = 120;
 
 	/**
+	 * Seconds after which a payload with missing sections is refreshed again.
+	 */
+	const PARTIAL_TTL = 15 * MINUTE_IN_SECONDS;
+
+	/**
 	 * Seconds between two manual refreshes of the same view.
 	 */
 	const MANUAL_COOLDOWN = 30;
@@ -70,7 +75,7 @@ class AIVD_Data {
 	 */
 	public static function get( $range, $force_refresh = false ) {
 		if ( $force_refresh ) {
-			$snapshot = self::refresh( self::context( $range ) );
+			$snapshot = self::refresh( self::context( $range ), 'interactive' );
 			if ( null === $snapshot ) {
 				return new WP_Error( 'aivd_locked', __( 'An update is already running. Reload the page in a few seconds.', 'ai-visibility-dashboard' ) );
 			}
@@ -131,8 +136,8 @@ class AIVD_Data {
 			return self::describe( $snapshot, $context, $may_retry );
 		}
 
-		// Nothing to show yet: this is the only case where the Dashboard waits for Mencoro.
-		$fetched = self::refresh( $context );
+		// Nothing to show yet: the only case where the Dashboard waits for Mencoro, within a short budget.
+		$fetched = self::refresh( $context, 'interactive' );
 		if ( null === $fetched ) {
 			return self::describe( $snapshot, $context, true );
 		}
@@ -170,7 +175,7 @@ class AIVD_Data {
 			}
 		}
 
-		$fetched = self::refresh( $context );
+		$fetched = self::refresh( $context, 'interactive' );
 		if ( null === $fetched ) {
 			return 'running';
 		}
@@ -194,17 +199,19 @@ class AIVD_Data {
 		if ( null !== $snapshot && (int) $snapshot['retry_at'] > time() ) {
 			return;
 		}
-		self::refresh( $context );
+		self::refresh( $context, 'background' );
 	}
 
 	/**
 	 * Fetches the payload under the lock and stores the outcome. A failure keeps
 	 * the previous valid payload and only records the error and the next retry.
 	 *
-	 * @param array $context Context.
+	 * @param array  $context Context.
+	 * @param string $mode    'interactive' when someone is waiting for the page,
+	 *                        'background' from WP-Cron. Sets the time budget.
 	 * @return array|null The stored snapshot, or null if another request holds the lock.
 	 */
-	private static function refresh( array $context ) {
+	private static function refresh( array $context, $mode ) {
 		$lock = 'refresh_' . $context['id'];
 		if ( ! AIVD_Lock::acquire( $lock, self::LOCK_TTL ) ) {
 			return null;
@@ -217,7 +224,7 @@ class AIVD_Data {
 			}
 
 			$now     = time();
-			$payload = self::build( AIVD_Settings::all(), $context['range'] );
+			$payload = self::build( AIVD_Settings::all(), $context['range'], self::budget( $mode ) );
 
 			$snapshot['attempted_at'] = $now;
 			if ( is_wp_error( $payload ) ) {
@@ -243,6 +250,23 @@ class AIVD_Data {
 		}
 
 		return $snapshot;
+	}
+
+	/**
+	 * Seconds one refresh may spend waiting for Mencoro.
+	 *
+	 * @param string $mode 'interactive' or 'background'.
+	 * @return int
+	 */
+	private static function budget( $mode ) {
+		/**
+		 * Filters the time, in seconds, one refresh may spend waiting for Mencoro.
+		 * Sections that do not fit are skipped and retried on a later update.
+		 *
+		 * @param int    $budget Seconds: 12 while someone waits for the page, 25 in the background.
+		 * @param string $mode   'interactive' or 'background'.
+		 */
+		return max( 5, (int) apply_filters( 'aivd_refresh_budget', 'background' === $mode ? 25 : 12, $mode ) );
 	}
 
 	/**
@@ -392,7 +416,12 @@ class AIVD_Data {
 		if ( ! self::has_payload( $snapshot ) ) {
 			return true;
 		}
-		if ( (int) $snapshot['fetched_at'] + self::ttl() <= $now ) {
+		$ttl = self::ttl();
+		if ( ! empty( $snapshot['payload']['failed_sections'] ) ) {
+			// Fill in the missing sections sooner, in the background.
+			$ttl = min( $ttl, self::PARTIAL_TTL );
+		}
+		if ( (int) $snapshot['fetched_at'] + $ttl <= $now ) {
 			return true;
 		}
 		return gmdate( 'Y-m-d', $now ) !== $snapshot['payload']['date_to'];
@@ -520,26 +549,20 @@ class AIVD_Data {
 	 *
 	 * @param array $settings Settings.
 	 * @param int   $range    Window in days.
+	 * @param int   $budget   Seconds the whole build may wait for Mencoro.
 	 * @return array|WP_Error
 	 */
-	private static function build( array $settings, $range ) {
-		$api  = new AIVD_API();
-		$base = AIVD_API::project_path( $settings['organization_id'], $settings['project_id'] );
+	private static function build( array $settings, $range, $budget ) {
+		$api      = new AIVD_API();
+		$base     = AIVD_API::project_path( $settings['organization_id'], $settings['project_id'] );
+		$deadline = microtime( true ) + $budget;
 
-		/**
-		 * Filters the time, in seconds, one refresh may spend waiting for Mencoro.
-		 * Secondary sections that do not fit are skipped and retried next time.
-		 *
-		 * @param int $budget Seconds.
-		 */
-		$deadline = microtime( true ) + max( 5, (int) apply_filters( 'aivd_refresh_budget', 25 ) );
-
-		$project = $api->get( $base );
+		$project = self::essential( $api, $deadline, $base, array() );
 		if ( is_wp_error( $project ) ) {
 			return $project;
 		}
 
-		$filters = $api->get( $base . '/available-filters' );
+		$filters = self::essential( $api, $deadline, $base . '/available-filters', array() );
 		if ( is_wp_error( $filters ) ) {
 			return $filters;
 		}
@@ -581,7 +604,7 @@ class AIVD_Data {
 			'engines'  => $engines,
 		);
 
-		$metrics = $api->get( $base . '/metrics', $window );
+		$metrics = self::essential( $api, $deadline, $base . '/metrics', $window );
 		if ( is_wp_error( $metrics ) ) {
 			return $metrics;
 		}
@@ -638,6 +661,23 @@ class AIVD_Data {
 		}
 
 		return $payload;
+	}
+
+	/**
+	 * GET for essential data, never waiting past the refresh's time budget.
+	 *
+	 * @param AIVD_API $api      Client.
+	 * @param float    $deadline microtime() after which nothing more is requested.
+	 * @param string   $path     Path.
+	 * @param array    $query    Query.
+	 * @return array|WP_Error
+	 */
+	private static function essential( AIVD_API $api, $deadline, $path, array $query ) {
+		$left = (int) floor( $deadline - microtime( true ) );
+		if ( $left < 1 ) {
+			return new WP_Error( 'aivd_http', __( 'Mencoro did not answer in time. The widget will try again later.', 'ai-visibility-dashboard' ), array( 'status' => 0 ) );
+		}
+		return $api->get( $path, $query, min( AIVD_API::timeout(), $left ) );
 	}
 
 	/**

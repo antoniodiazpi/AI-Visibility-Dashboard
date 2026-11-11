@@ -1,18 +1,30 @@
 /* AI Visibility Dashboard for Mencoro — admin styles. Loaded on the Dashboard and the settings screen only. */
 
+/*
+ * Design tokens (identity guide, light scheme). Contrast checked against
+ * --aivd-bg and --aivd-surface: every text colour is at least 4.9:1 (WCAG AA),
+ * bars and swatches at least 3:1. The WordPress admin has no dark scheme, so
+ * the dark tokens of the guide are not used here.
+ */
+.aivd,
+.aivd-settings {
+	--aivd-bg: #fff;
+	--aivd-surface: #f5f7fa;
+	--aivd-text: #17212f;
+	--aivd-muted: #526073;
+	--aivd-border: #dce2ea;
+	--aivd-accent: #2257d7;
+	--aivd-accent-wash: rgba(34, 87, 215, 0.1);
+	--aivd-accent-tint: #e8effc;
+	--aivd-neutral: #7b8494;
+	--aivd-positive: #137a57;
+	--aivd-warning: #9a5b0c;
+	--aivd-warning-wash: #fdf6ec;
+	--aivd-danger: #b42318;
+}
+
 .aivd {
-	--aivd-ink: #1d2327;
-	--aivd-muted: #646970;
-	--aivd-line: #dcdcde;
-	--aivd-soft: #f6f7f7;
-	--aivd-brand: #2a78d6;
-	--aivd-brand-wash: rgba(42, 120, 214, 0.1);
-	--aivd-other: #a3a29a;
-	--aivd-negative: #e34948;
-	--aivd-good-text: #006300;
-	--aivd-bad-text: #b32d2e;
-	--aivd-surface: #fff;
-	color: var(--aivd-ink);
+	color: var(--aivd-text);
 	font-size: 13px;
 	line-height: 1.45;
 }
@@ -35,7 +47,7 @@
 
 .aivd-range {
 	display: inline-flex;
-	border: 1px solid var(--aivd-line);
+	border: 1px solid var(--aivd-border);
 	border-radius: 4px;
 	overflow: hidden;
 	flex-shrink: 0;
@@ -46,12 +58,12 @@
 	line-height: 20px;
 	text-decoration: none;
 	color: var(--aivd-muted);
-	border-left: 1px solid var(--aivd-line);
+	border-left: 1px solid var(--aivd-border);
 }
 .aivd-range__item:first-child { border-left: 0; }
 .aivd-range a.aivd-range__item:hover,
-.aivd-range a.aivd-range__item:focus { color: var(--aivd-ink); background: var(--aivd-soft); }
-.aivd-range__item.is-current { color: #fff; background: var(--aivd-ink); font-weight: 600; }
+.aivd-range a.aivd-range__item:focus { color: var(--aivd-text); background: var(--aivd-surface); }
+.aivd-range__item.is-current { color: #fff; background: var(--aivd-text); font-weight: 600; }
 
 /* KPI tiles */
 .aivd-kpis {
@@ -65,8 +77,8 @@
 	flex-direction: column;
 	gap: 2px;
 	padding: 10px 12px;
-	background: var(--aivd-soft);
-	border-radius: 6px;
+	background: var(--aivd-surface);
+	border-radius: 10px;
 	cursor: help;
 }
 .aivd-kpi__label { font-size: 12px; color: var(--aivd-muted); }
@@ -74,8 +86,8 @@
 .aivd-kpi__value small { font-size: 12px; font-weight: 400; color: var(--aivd-muted); margin-left: 1px; }
 
 .aivd-delta { font-size: 12px; font-weight: 600; white-space: nowrap; }
-.aivd-delta--up { color: var(--aivd-good-text); }
-.aivd-delta--down { color: var(--aivd-bad-text); }
+.aivd-delta--up { color: var(--aivd-positive); }
+.aivd-delta--down { color: var(--aivd-danger); }
 .aivd-delta--flat,
 .aivd-delta--none { color: var(--aivd-muted); font-weight: 400; }
 
@@ -83,31 +95,31 @@
 .aivd-section {
 	margin: 16px 0 0;
 	padding: 14px 0 0;
-	border-top: 1px solid var(--aivd-line);
+	border-top: 1px solid var(--aivd-border);
 }
 .aivd .aivd-h {
 	margin: 0 0 8px;
 	padding: 0;
 	font-size: 13px;
 	font-weight: 600;
-	color: var(--aivd-ink);
+	color: var(--aivd-text);
 }
 
 /* Share of Voice sparkline */
 .aivd-spark { display: block; width: 100%; height: auto; overflow: visible; }
-.aivd-spark__base { stroke: var(--aivd-line); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.aivd-spark__area { fill: var(--aivd-brand-wash); }
+.aivd-spark__base { stroke: var(--aivd-border); stroke-width: 1; vector-effect: non-scaling-stroke; }
+.aivd-spark__area { fill: var(--aivd-accent-wash); }
 .aivd-spark__line {
 	fill: none;
-	stroke: var(--aivd-brand);
+	stroke: var(--aivd-accent);
 	stroke-width: 2;
 	stroke-linejoin: round;
 	stroke-linecap: round;
 	vector-effect: non-scaling-stroke;
 }
-.aivd-spark__end { fill: var(--aivd-brand); stroke: var(--aivd-surface); stroke-width: 2; vector-effect: non-scaling-stroke; }
+.aivd-spark__end { fill: var(--aivd-accent); stroke: var(--aivd-bg); stroke-width: 2; vector-effect: non-scaling-stroke; }
 .aivd-spark__hit { fill: transparent; cursor: crosshair; }
-.aivd-spark__hit:hover { fill: var(--aivd-brand-wash); }
+.aivd-spark__hit:hover { fill: var(--aivd-accent-wash); }
 .aivd-spark__axis {
 	display: flex;
 	justify-content: space-between;
@@ -132,10 +144,10 @@
 	display: block;
 	height: 100%;
 	min-width: 2px;
-	background: var(--aivd-other);
+	background: var(--aivd-neutral);
 	border-radius: 0 4px 4px 0;
 }
-.aivd-bar.is-brand .aivd-bar__fill { background: var(--aivd-brand); }
+.aivd-bar.is-brand .aivd-bar__fill { background: var(--aivd-accent); }
 .aivd-bar__value { text-align: right; font-variant-numeric: tabular-nums; }
 
 .aivd-tag {
@@ -144,8 +156,8 @@
 	font-size: 11px;
 	font-weight: 600;
 	line-height: 16px;
-	color: #0a4b78;
-	background: #e7f0fa;
+	color: var(--aivd-accent);
+	background: var(--aivd-accent-tint);
 	border-radius: 3px;
 	vertical-align: 1px;
 }
@@ -162,11 +174,11 @@
 .aivd-stack__seg:last-child { border-radius: 0 4px 4px 0; }
 .aivd-stack__seg:only-child { border-radius: 4px; }
 .aivd-stack__seg--positive,
-.aivd-swatch--positive { background: var(--aivd-brand); }
+.aivd-swatch--positive { background: var(--aivd-accent); }
 .aivd-stack__seg--neutral,
-.aivd-swatch--neutral { background: var(--aivd-other); }
+.aivd-swatch--neutral { background: var(--aivd-neutral); }
 .aivd-stack__seg--negative,
-.aivd-swatch--negative { background: var(--aivd-negative); }
+.aivd-swatch--negative { background: var(--aivd-danger); }
 
 .aivd-legend {
 	display: flex;
@@ -195,7 +207,7 @@
 	gap: 10px;
 	margin: 0;
 	padding: 5px 0;
-	border-bottom: 1px solid var(--aivd-soft);
+	border-bottom: 1px solid var(--aivd-surface);
 }
 .aivd-list__row:last-child { border-bottom: 0; }
 .aivd-list__main { display: flex; flex-direction: column; min-width: 0; overflow-wrap: anywhere; }
@@ -212,19 +224,33 @@ ol.aivd-list .aivd-list__main { display: block; }
 }
 .aivd-movers__title { margin: 0 0 2px; font-size: 12px; font-weight: 600; color: var(--aivd-muted); }
 
-.aivd-tip {
-	margin: 8px 0 0;
-	padding: 8px 10px;
-	font-size: 12px;
-	background: #fcf9e8;
-	border-left: 3px solid #dba617;
-}
-
 /* States */
 .aivd-state { padding: 4px 0; }
-.aivd-state--error p:first-child { color: var(--aivd-bad-text); }
+.aivd-state--error p:first-child { color: var(--aivd-danger); }
 .aivd-state--setup .aivd-setup-title { font-size: 14px; font-weight: 600; }
 .aivd-note { font-size: 12px; color: var(--aivd-muted); }
+.aivd-section .aivd-note { margin: 8px 0 0; }
+.aivd-status {
+	margin: 0 0 12px;
+	padding: 8px 10px;
+	font-size: 12px;
+	background: var(--aivd-surface);
+	border-left: 3px solid var(--aivd-accent);
+	border-radius: 0 6px 6px 0;
+}
+.aivd-status p { margin: 0; }
+.aivd-status--stale {
+	color: var(--aivd-text);
+	background: var(--aivd-warning-wash);
+	border-left-color: var(--aivd-warning);
+}
+.aivd-sample,
+.aivd-caption {
+	margin: 6px 0 0;
+	font-size: 12px;
+	color: var(--aivd-muted);
+}
+.aivd-caption { margin: -4px 0 8px; }
 
 /* Glossary and footer */
 .aivd-glossary { margin: 14px 0 0; font-size: 12px; }
@@ -242,12 +268,26 @@ ol.aivd-list .aivd-list__main { display: block; }
 	padding: 9px 12px;
 	font-size: 12px;
 	color: var(--aivd-muted);
-	background: var(--aivd-soft);
-	border-top: 1px solid var(--aivd-line);
+	background: var(--aivd-surface);
+	border-top: 1px solid var(--aivd-border);
 }
 
 /* Settings screen */
 .aivd-settings .aivd-lead { max-width: 720px; font-size: 14px; }
 .aivd-settings .aivd-check { display: inline-block; margin: 0 16px 6px 0; }
-.aivd-settings .aivd-error { color: #b32d2e; }
-.aivd-settings .aivd-privacy { max-width: 720px; color: #646970; }
+.aivd-settings .aivd-error { color: var(--aivd-danger); }
+.aivd-settings .aivd-privacy { max-width: 720px; color: var(--aivd-muted); }
+.aivd-settings .aivd-privacy ul { margin: 0 0 12px 18px; list-style: disc; }
+.aivd-settings .aivd-status-table { max-width: 720px; margin-bottom: 8px; }
+.aivd-settings .aivd-status-table th { width: 200px; font-weight: 600; }
+
+/* Windows high contrast and other forced-colour modes: keep bars visible. */
+@media (forced-colors: active) {
+	.aivd-bar__fill,
+	.aivd-stack__seg,
+	.aivd-swatch { forced-color-adjust: none; background: CanvasText; }
+	.aivd-bar.is-brand .aivd-bar__fill,
+	.aivd-stack__seg--positive,
+	.aivd-swatch--positive { background: Highlight; }
+	.aivd-spark__line { stroke: CanvasText; }
+}

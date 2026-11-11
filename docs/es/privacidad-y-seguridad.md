@@ -17,7 +17,7 @@ El plugin habla con **un único servicio: la API de Mencoro (`https://api.mencor
 
 ### Cuándo se hacen peticiones
 
-- Cuando alguien con permiso para ver el widget abre el Escritorio y los datos en caché han caducado (cada 6 horas, y al empezar cada día UTC).
+- Cuando alguien con permiso para ver el widget abre el Escritorio y los datos están desactualizados (cada 6 horas, y al empezar cada día UTC). La actualización se hace entonces en segundo plano con WP-Cron; solo la primera vista, sin nada que mostrar todavía, la espera (12 segundos como mucho).
 - Cuando alguien pulsa **Actualizar** o **Reintentar**.
 - Cuando un administrador guarda o abre **Ajustes → Visibilidad en IA** (para comprobar la clave y listar proyectos; la lista de proyectos se guarda 10 minutos).
 
@@ -30,8 +30,10 @@ Condiciones y política de privacidad de Mencoro: <https://mencoro.com/legal/>.
 | Dato | Dónde | Notas |
 |---|---|---|
 | Ajustes y clave de API | `wp_options`, opción `aivd_settings` | No se carga automáticamente, así que no se lee en cada página. Si la clave viene de `wp-config.php` o de una variable de entorno, al guardar los ajustes se borra la que hubiera guardada. |
-| Datos en caché | Transitorios `aivd_…` | Métricas agregadas, nombres de competidores, dominios citados y textos de las consultas seguidas. Sin datos personales. Caducan solos. |
-| Versión de la caché | `wp_options`, opción `aivd_cache_version` | Un número que sube al pulsar **Actualizar**. |
+| Últimas cifras recibidas | `wp_options`, opciones `aivd_snapshot_…` (6 como mucho) y el índice `aivd_snapshots`, sin carga automática | Métricas agregadas, nombres de competidores, dominios citados y textos de las consultas seguidas, más el último error. Sin datos personales y nunca la clave. Se borran al cambiar la clave, el proyecto o los motores. |
+| Bloqueo de actualización | `wp_options`, opción `aivd_lock_…` | Una marca de tiempo que dura mientras se hace una actualización (2 minutos como mucho). |
+| Lista de proyectos, avisos puntuales | Transitorios `aivd_…` | Caducan en minutos. |
+| Versión de la caché | `wp_options`, opción `aivd_cache_version` | Un número que sube al guardar los ajustes. |
 
 Al borrar el plugin desde **Plugins** se elimina todo, en todos los sitios de una red multisitio.
 

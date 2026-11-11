@@ -1,55 +1,53 @@
-# Copyright (C) 2026 TrailSEO
-# This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: AI Visibility Dashboard for Mencoro 1.0.0\n"
+"Project-Id-Version: AI Visibility Dashboard for Mencoro 1.0.1\n"
 "Report-Msgid-Bugs-To: https://github.com/antoniodiazpi/ai-visibility-dashboard/issues\n"
 "Last-Translator: TrailSEO\n"
 "Language-Team: Spanish (Spain)\n"
-"Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-10-17T11:53:02+00:00\n"
-"PO-Revision-Date: 2026-10-17 12:00+0200\n"
+"POT-Creation-Date: 2026-11-11T17:23:53+00:00\n"
+"PO-Revision-Date: 2026-11-11T17:31:37+00:00\n"
+"Language: es_ES\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: ai-visibility-dashboard\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin
-#: ai-visibility-dashboard.php
+#: ai-visibility-dashboard.php:3
 msgid "AI Visibility Dashboard for Mencoro"
 msgstr "AI Visibility Dashboard for Mencoro"
 
 #. Plugin URI of the plugin
-#: ai-visibility-dashboard.php
-msgid "https://trailseo.com/"
-msgstr "https://trailseo.com/"
+#: ai-visibility-dashboard.php:4
+msgid "https://github.com/antoniodiazpi/ai-visibility-dashboard"
+msgstr "https://github.com/antoniodiazpi/ai-visibility-dashboard"
 
 #. Description of the plugin
-#: ai-visibility-dashboard.php
+#: ai-visibility-dashboard.php:5
 msgid "See how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right in the WordPress dashboard. Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, powered by your Mencoro account."
 msgstr "Descubre cómo hablan de tu marca ChatGPT, Claude, Perplexity y Google IA, sin salir del escritorio de WordPress: cuota de voz, tasa de mención, sentimiento, competidores y las fuentes que citan las respuestas de IA, con los datos de tu cuenta de Mencoro."
 
 #. Author of the plugin
-#: ai-visibility-dashboard.php
+#: ai-visibility-dashboard.php:9
 msgid "TrailSEO"
 msgstr "TrailSEO"
 
 #. Author URI of the plugin
-#: ai-visibility-dashboard.php
+#: ai-visibility-dashboard.php:10
 msgid "https://trailseo.com"
 msgstr "https://trailseo.com"
 
-#: ai-visibility-dashboard.php:56
-#: includes/class-aivd-widget.php:67
-#: includes/class-aivd-widget.php:533
+#: ai-visibility-dashboard.php:58
+#: includes/class-aivd-widget.php:140
+#: includes/class-aivd-widget.php:668
 msgid "Settings"
 msgstr "Ajustes"
 
 #: includes/class-aivd-admin.php:32
 #: includes/class-aivd-admin.php:33
-#: includes/class-aivd-admin.php:221
+#: includes/class-aivd-admin.php:261
 msgid "AI Visibility"
 msgstr "Visibilidad en IA"
 
@@ -65,188 +63,320 @@ msgstr "Google Modo IA"
 msgid "You are not allowed to change these settings."
 msgstr "No tienes permiso para cambiar estos ajustes."
 
-#: includes/class-aivd-admin.php:120
+#: includes/class-aivd-admin.php:125
+msgid "That does not look like a Mencoro API key, so it was not saved. Copy it again from Mencoro: it starts with mencoro_sk_ and has no spaces."
+msgstr "Eso no parece una clave de API de Mencoro, así que no se ha guardado. Cópiala de nuevo desde Mencoro: empieza por mencoro_sk_ y no tiene espacios."
+
+#: includes/class-aivd-admin.php:127
 msgid "Settings saved."
 msgstr "Ajustes guardados."
 
-#: includes/class-aivd-admin.php:126
+#: includes/class-aivd-admin.php:133
 msgid "Key saved and working. Now choose the project to show."
 msgstr "Clave guardada y funcionando. Ahora elige el proyecto que quieres ver."
 
-#: includes/class-aivd-admin.php:128
+#: includes/class-aivd-admin.php:135
 msgid "Settings saved. The widget is ready on your Dashboard."
 msgstr "Ajustes guardados. El widget ya está listo en tu Escritorio."
 
-#: includes/class-aivd-admin.php:141
+#: includes/class-aivd-admin.php:151
 msgid "You are not allowed to do this."
 msgstr "No tienes permiso para hacer esto."
 
-#: includes/class-aivd-admin.php:223
+#: includes/class-aivd-admin.php:160
+msgid "An update was already running. The figures below are the latest available."
+msgstr "Ya había una actualización en marcha. Las cifras de abajo son las últimas disponibles."
+
+#: includes/class-aivd-admin.php:161
+msgid "The data was updated less than a minute ago. Try again in a moment."
+msgstr "Los datos se actualizaron hace menos de un minuto. Inténtalo de nuevo en un momento."
+
+#: includes/class-aivd-admin.php:162
+msgid "Mencoro asked to wait before the next update. The widget will update on its own as soon as it can."
+msgstr "Mencoro ha pedido esperar antes de la próxima actualización. El widget se actualizará solo en cuanto pueda."
+
+#: includes/class-aivd-admin.php:263
 msgid "See on your Dashboard how ChatGPT, Claude, Perplexity and Google AI mention your brand: Share of Voice, mention rate, sentiment, competitors and the sources they cite. The data comes from your Mencoro project."
 msgstr "Mira en tu Escritorio cómo mencionan tu marca ChatGPT, Claude, Perplexity y Google IA: cuota de voz, tasa de mención, sentimiento, competidores y las fuentes que citan. Los datos salen de tu proyecto de Mencoro."
 
-#: includes/class-aivd-admin.php:234
+#: includes/class-aivd-admin.php:274
 msgid "1. Mencoro API key"
 msgstr "1. Clave de la API de Mencoro"
 
-#: includes/class-aivd-admin.php:237
+#: includes/class-aivd-admin.php:277
 msgid "API key"
 msgstr "Clave de API"
 
 #. translators: %s: last four characters of the API key.
-#: includes/class-aivd-admin.php:245
+#: includes/class-aivd-admin.php:285
 #, php-format
 msgid "Defined in wp-config.php with the MENCORO_API_KEY constant (ends in %s)."
 msgstr "Definida en wp-config.php con la constante MENCORO_API_KEY (termina en %s)."
 
 #. translators: %s: last four characters of the API key.
-#: includes/class-aivd-admin.php:247
+#: includes/class-aivd-admin.php:287
 #, php-format
 msgid "Read from the MENCORO_API_KEY environment variable (ends in %s)."
 msgstr "Leída de la variable de entorno MENCORO_API_KEY (termina en %s)."
 
 #. translators: %s: last four characters of the API key.
-#: includes/class-aivd-admin.php:258
+#: includes/class-aivd-admin.php:298
 #, php-format
 msgid "A key ending in %s is saved. Leave the field empty to keep it."
 msgstr "Hay guardada una clave que termina en %s. Deja el campo vacío para conservarla."
 
-#: includes/class-aivd-admin.php:261
+#: includes/class-aivd-admin.php:301
 msgid "Remove the saved key"
 msgstr "Borrar la clave guardada"
 
 #. translators: %s: link to Mencoro.
-#: includes/class-aivd-admin.php:267
+#: includes/class-aivd-admin.php:307
 #, php-format
 msgid "Create a key in your %s account, under API keys in the user menu. The \"read\" capability is enough: the plugin never changes anything in Mencoro."
 msgstr "Crea una clave en tu cuenta de %s, en «API keys» dentro del menú de usuario. Basta con el permiso «read» (lectura): el plugin nunca cambia nada en Mencoro."
 
-#: includes/class-aivd-admin.php:273
+#: includes/class-aivd-admin.php:313
 msgid "Tip: on shared or client sites, define it in wp-config.php instead: define( 'MENCORO_API_KEY', '…' );"
 msgstr "Consejo: en webs compartidas o de clientes, mejor defínela en wp-config.php: define( 'MENCORO_API_KEY', '…' );"
 
-#: includes/class-aivd-admin.php:279
+#: includes/class-aivd-admin.php:319
 msgid "2. What to show"
 msgstr "2. Qué mostrar"
 
-#: includes/class-aivd-admin.php:282
+#: includes/class-aivd-admin.php:322
 msgid "Project"
 msgstr "Proyecto"
 
-#: includes/class-aivd-admin.php:285
+#: includes/class-aivd-admin.php:325
 msgid "Save your API key first to list your projects."
 msgstr "Guarda primero tu clave de API para ver tus proyectos."
 
-#: includes/class-aivd-admin.php:289
+#: includes/class-aivd-admin.php:329
 msgid "This key cannot see any active project yet. Create one in Mencoro and come back."
 msgstr "Esta clave todavía no ve ningún proyecto activo. Crea uno en Mencoro y vuelve."
 
-#: includes/class-aivd-admin.php:292
+#: includes/class-aivd-admin.php:332
 msgid "— Choose a project —"
 msgstr "— Elige un proyecto —"
 
-#: includes/class-aivd-admin.php:313
-#: includes/class-aivd-admin.php:316
+#: includes/class-aivd-admin.php:353
+#: includes/class-aivd-admin.php:356
 msgid "AI engines"
 msgstr "Motores de IA"
 
-#: includes/class-aivd-admin.php:320
+#: includes/class-aivd-admin.php:360
 msgid "Only the engines your project tracks in Mencoro are used. Google classic results and Shopping are left out on purpose."
 msgstr "Solo se usan los motores que tu proyecto sigue en Mencoro. Los resultados clásicos de Google y Shopping se dejan fuera a propósito."
 
-#: includes/class-aivd-admin.php:325
+#: includes/class-aivd-admin.php:365
 msgid "Default period"
 msgstr "Periodo por defecto"
 
 #. translators: %d: number of days.
-#: includes/class-aivd-admin.php:332
-#: includes/class-aivd-widget.php:151
+#: includes/class-aivd-admin.php:372
+#: includes/class-aivd-widget.php:265
 #, php-format
 msgid "Last %d day"
 msgid_plural "Last %d days"
 msgstr[0] "Último %d día"
 msgstr[1] "Últimos %d días"
 
-#: includes/class-aivd-admin.php:337
+#: includes/class-aivd-admin.php:377
 msgid "Trends compare with the previous period of the same length."
 msgstr "Las tendencias se comparan con el periodo anterior de la misma duración."
 
-#: includes/class-aivd-admin.php:341
-#: includes/class-aivd-admin.php:344
+#: includes/class-aivd-admin.php:381
+#: includes/class-aivd-admin.php:384
 msgid "Who sees the widget"
 msgstr "Quién ve el widget"
 
-#: includes/class-aivd-admin.php:345
+#: includes/class-aivd-admin.php:385
 msgid "Administrators"
 msgstr "Administradores"
 
-#: includes/class-aivd-admin.php:346
+#: includes/class-aivd-admin.php:386
 msgid "Editors and administrators"
 msgstr "Editores y administradores"
 
-#: includes/class-aivd-admin.php:347
+#: includes/class-aivd-admin.php:387
 msgid "Handy for agencies: let the client's editors see their AI visibility without access to the settings or the key."
 msgstr "Útil para agencias: los editores del cliente ven su visibilidad en IA sin acceder a los ajustes ni a la clave."
 
-#: includes/class-aivd-admin.php:353
+#: includes/class-aivd-admin.php:393
 msgid "Save and check connection"
 msgstr "Guardar y comprobar la conexión"
 
-#: includes/class-aivd-admin.php:356
-msgid "Privacy"
-msgstr "Privacidad"
+#: includes/class-aivd-admin.php:402
+msgid "External service and privacy"
+msgstr "Servicio externo y privacidad"
 
 #. translators: %s: API host name.
-#: includes/class-aivd-admin.php:361
+#: includes/class-aivd-admin.php:408
 #, php-format
-msgid "The plugin only talks to %s, with your key and in read-only mode. It sends nothing about your site or your visitors, adds nothing to the front end and loads no external scripts."
-msgstr "El plugin solo se comunica con %s, con tu clave y en modo de solo lectura. No envía nada sobre tu web ni tus visitantes, no añade nada a la parte pública y no carga scripts externos."
+msgid "This plugin shows data from Mencoro, an external service. It only talks to %s, with your key and in read-only mode, and only from the admin."
+msgstr "Este plugin muestra datos de Mencoro, un servicio externo. Solo se comunica con %s, con tu clave, en modo de solo lectura y únicamente desde el administrador."
 
-#: includes/class-aivd-api.php:61
+#: includes/class-aivd-admin.php:414
+msgid "What is sent: your API key (in a request header), the organization and project chosen, the period and the AI engines. Nothing about your site, its content, its users or its visitors."
+msgstr "Qué se envía: tu clave de API (en una cabecera de la petición), la organización y el proyecto elegidos, el periodo y los motores de IA. Nada sobre tu sitio, su contenido, sus usuarios ni sus visitantes."
+
+#: includes/class-aivd-admin.php:415
+msgid "When: when you save this screen, when you open it to list your projects, when the Dashboard data is out of date (every 6 hours by default) and when someone clicks Refresh."
+msgstr "Cuándo: al guardar esta pantalla, al abrirla para listar tus proyectos, cuando los datos del escritorio están desactualizados (cada 6 horas por defecto) y cuando alguien pulsa Actualizar."
+
+#: includes/class-aivd-admin.php:416
+msgid "What is stored here: these settings and the last figures received, never your visitors' data. Deleting the plugin removes all of it."
+msgstr "Qué se guarda aquí: estos ajustes y las últimas cifras recibidas, nunca datos de tus visitantes. Al borrar el plugin se elimina todo."
+
+#: includes/class-aivd-admin.php:417
+msgid "Nothing is added to the front end, no external scripts are loaded and no usage data is collected."
+msgstr "No se añade nada a la parte pública, no se cargan scripts externos y no se recogen datos de uso."
+
+#. translators: %s: link to the Mencoro legal page.
+#: includes/class-aivd-admin.php:423
+#, php-format
+msgid "Mencoro terms of use and privacy policy: %s. This plugin is independent and is not made by Mencoro."
+msgstr "Condiciones de uso y política de privacidad de Mencoro: %s. Este plugin es independiente y no lo hace Mencoro."
+
+#: includes/class-aivd-admin.php:440
+msgid "Up to date"
+msgstr "Al día"
+
+#: includes/class-aivd-admin.php:441
+msgid "Up to date, some sections missing"
+msgstr "Al día, faltan algunas secciones"
+
+#: includes/class-aivd-admin.php:442
+msgid "Connected, no data in this period yet"
+msgstr "Conectado, aún sin datos en este periodo"
+
+#: includes/class-aivd-admin.php:443
+msgid "Out of date, update pending"
+msgstr "Desactualizado, actualización pendiente"
+
+#: includes/class-aivd-admin.php:444
+msgid "Fetching"
+msgstr "Obteniendo datos"
+
+#: includes/class-aivd-admin.php:445
+msgid "Not updated yet"
+msgstr "Aún sin actualizar"
+
+#: includes/class-aivd-admin.php:449
+msgid "Status"
+msgstr "Estado"
+
+#: includes/class-aivd-admin.php:450
+msgid "Last update"
+msgstr "Última actualización"
+
+#: includes/class-aivd-admin.php:450
+msgid "Never"
+msgstr "Nunca"
+
+#: includes/class-aivd-admin.php:453
+msgid "Last error"
+msgstr "Último error"
+
+#: includes/class-aivd-admin.php:456
+msgid "Next automatic attempt"
+msgstr "Próximo intento automático"
+
+#: includes/class-aivd-admin.php:458
+msgid "Background updates"
+msgstr "Actualizaciones en segundo plano"
+
+#: includes/class-aivd-admin.php:459
+msgid "WP-Cron is disabled on this site: updates run when your server calls wp-cron.php, or when someone clicks Refresh."
+msgstr "WP-Cron está desactivado en este sitio: las actualizaciones se hacen cuando tu servidor llama a wp-cron.php o cuando alguien pulsa Actualizar."
+
+#: includes/class-aivd-admin.php:460
+msgid "Handled by WP-Cron. The Dashboard never waits for Mencoro when it has data to show."
+msgstr "Las gestiona WP-Cron. El escritorio nunca espera a Mencoro si tiene datos que mostrar."
+
+#: includes/class-aivd-admin.php:461
+msgid "Plugin version"
+msgstr "Versión del plugin"
+
+#: includes/class-aivd-admin.php:463
+msgid "Connection status"
+msgstr "Estado de la conexión"
+
+#: includes/class-aivd-api.php:114
 msgid "Add your Mencoro API key in the settings."
 msgstr "Añade tu clave de API de Mencoro en los ajustes."
 
+#: includes/class-aivd-api.php:158
+msgid "Mencoro sent a response the plugin could not read. If this keeps happening, a proxy or firewall may be answering instead of Mencoro."
+msgstr "Mencoro ha enviado una respuesta que el plugin no puede leer. Si se repite, puede que un proxy o un cortafuegos esté respondiendo en lugar de Mencoro."
+
+#: includes/class-aivd-api.php:175
+#: includes/class-aivd-data.php:678
+msgid "Mencoro did not answer in time. The widget will try again later."
+msgstr "Mencoro no ha respondido a tiempo. El widget lo intentará de nuevo más tarde."
+
 #. translators: %s: technical error message from WordPress HTTP API.
-#: includes/class-aivd-api.php:97
+#: includes/class-aivd-api.php:179
 #, php-format
 msgid "Could not reach Mencoro: %s"
 msgstr "No se pudo conectar con Mencoro: %s"
 
-#: includes/class-aivd-api.php:106
-msgid "Mencoro sent a response the plugin could not read."
-msgstr "Mencoro envió una respuesta que el plugin no ha podido leer."
-
-#: includes/class-aivd-api.php:135
+#: includes/class-aivd-api.php:202
 msgid "Mencoro rejected the API key. Check that it is complete and has not been revoked."
 msgstr "Mencoro ha rechazado la clave de API. Comprueba que está completa y que no se ha revocado."
 
-#: includes/class-aivd-api.php:138
+#: includes/class-aivd-api.php:205
 msgid "This API key cannot read this data. Give it the \"read\" capability and access to the organization."
 msgstr "Esta clave de API no puede leer estos datos. Dale el permiso «read» y acceso a la organización."
 
-#: includes/class-aivd-api.php:141
+#: includes/class-aivd-api.php:208
 msgid "Mencoro could not find this project with this key. Choose the project again in the settings."
 msgstr "Mencoro no encuentra este proyecto con esta clave. Vuelve a elegir el proyecto en los ajustes."
 
 #. translators: %d: number of seconds.
-#: includes/class-aivd-api.php:147
+#: includes/class-aivd-api.php:215
 #, php-format
 msgid "Too many requests to Mencoro. Try again in %d second."
 msgid_plural "Too many requests to Mencoro. Try again in %d seconds."
 msgstr[0] "Demasiadas peticiones a Mencoro. Inténtalo de nuevo en %d segundo."
 msgstr[1] "Demasiadas peticiones a Mencoro. Inténtalo de nuevo en %d segundos."
 
-#: includes/class-aivd-api.php:148
+#: includes/class-aivd-api.php:216
 msgid "Too many requests to Mencoro. Try again in a few minutes."
 msgstr "Demasiadas peticiones a Mencoro. Inténtalo de nuevo en unos minutos."
 
 #. translators: %d: HTTP status code.
-#: includes/class-aivd-api.php:152
+#: includes/class-aivd-api.php:220
+#, php-format
+msgid "Mencoro answered with an unexpected redirect (HTTP %d). Check that nothing between your server and Mencoro rewrites the address."
+msgstr "Mencoro ha respondido con una redirección inesperada (HTTP %d). Comprueba que nada entre tu servidor y Mencoro reescribe la dirección."
+
+#. translators: %d: HTTP status code.
+#: includes/class-aivd-api.php:224
+#, php-format
+msgid "Mencoro answered with an error (HTTP %d). This is usually temporary: the widget will try again later."
+msgstr "Mencoro ha respondido con un error (HTTP %d). Suele ser temporal: el widget lo intentará de nuevo más tarde."
+
+#. translators: %d: HTTP status code.
+#: includes/class-aivd-api.php:228
 #, php-format
 msgid "Mencoro answered with an error (HTTP %d)."
 msgstr "Mencoro ha respondido con un error (HTTP %d)."
 
-#: includes/class-aivd-data.php:241
+#: includes/class-aivd-data.php:80
+msgid "An update is already running. Reload the page in a few seconds."
+msgstr "Ya hay una actualización en marcha. Recarga la página en unos segundos."
+
+#: includes/class-aivd-data.php:92
+#: includes/class-aivd-data.php:360
+msgid "Your data is on its way. Reload the page in a few seconds."
+msgstr "Tus datos están en camino. Recarga la página en unos segundos."
+
+#: includes/class-aivd-data.php:695
+msgid "Not loaded this time because Mencoro was slow. It will be retried on the next update."
+msgstr "No se ha cargado esta vez porque Mencoro iba lento. Se reintentará en la próxima actualización."
+
+#: includes/class-aivd-data.php:767
 msgid "Competitor"
 msgstr "Competidor"
 
@@ -254,223 +384,288 @@ msgstr "Competidor"
 msgid "AI visibility"
 msgstr "Visibilidad en IA"
 
-#: includes/class-aivd-widget.php:65
-msgid "Try again"
-msgstr "Reintentar"
-
-#: includes/class-aivd-widget.php:77
+#: includes/class-aivd-widget.php:80
 msgid "This project does not track any of the AI engines chosen in the settings. Tick other engines in Settings → AI Visibility."
 msgstr "Este proyecto no sigue ninguno de los motores de IA elegidos en los ajustes. Marca otros motores en Ajustes → Visibilidad en IA."
 
-#: includes/class-aivd-widget.php:78
+#: includes/class-aivd-widget.php:81
 msgid "This Mencoro project does not track any AI engine yet (ChatGPT, Claude, Perplexity or Google AI). Add them to its tracked queries to see data here."
 msgstr "Este proyecto de Mencoro todavía no sigue ningún motor de IA (ChatGPT, Claude, Perplexity o Google IA). Añádelos a sus consultas para ver datos aquí."
 
-#: includes/class-aivd-widget.php:86
-msgid "No AI answers were checked in this period yet. Mencoro checks most queries once a day: come back tomorrow or choose a longer period."
-msgstr "Todavía no se ha comprobado ninguna respuesta de IA en este periodo. Mencoro revisa casi todas las consultas una vez al día: vuelve mañana o elige un periodo más largo."
+#: includes/class-aivd-widget.php:89
+msgid "No AI answers were checked in this period yet, so there is nothing to measure. Mencoro checks most queries once a day: come back tomorrow or choose a longer period."
+msgstr "Todavía no se ha comprobado ninguna respuesta de IA en este periodo, así que no hay nada que medir. Mencoro comprueba la mayoría de las consultas una vez al día: vuelve mañana o elige un periodo más largo."
 
-#: includes/class-aivd-widget.php:93
+#: includes/class-aivd-widget.php:96
 msgid "Mencoro is recalculating part of this period: figures may still change slightly."
 msgstr "Mencoro está recalculando parte de este periodo: las cifras aún pueden cambiar un poco."
 
-#: includes/class-aivd-widget.php:113
+#: includes/class-aivd-widget.php:120
+msgid "Your data is on its way from Mencoro."
+msgstr "Tus datos están llegando desde Mencoro."
+
+#: includes/class-aivd-widget.php:121
+msgid "Reload in a few seconds"
+msgstr "Recarga en unos segundos"
+
+#. translators: %s: time until the next attempt, e.g. "5 mins".
+#: includes/class-aivd-widget.php:132
+#: includes/class-aivd-widget.php:164
+#, php-format
+msgid "Next automatic attempt in %s."
+msgstr "Próximo intento automático dentro de %s."
+
+#: includes/class-aivd-widget.php:138
+msgid "Try again"
+msgstr "Reintentar"
+
+#. translators: %s: age of the data, e.g. "8 hours".
+#: includes/class-aivd-widget.php:156
+#, php-format
+msgid "Last data available, from %s ago."
+msgstr "Últimos datos disponibles, de hace %s."
+
+#: includes/class-aivd-widget.php:168
+msgid "Automatic updates do not seem to run on this site (WP-Cron). Use Refresh to update now."
+msgstr "Parece que las actualizaciones automáticas no funcionan en este sitio (WP-Cron). Usa Actualizar para actualizar ahora."
+
+#: includes/class-aivd-widget.php:170
+msgid "An update is running in the background: reload the Dashboard in a minute to see it."
+msgstr "Hay una actualización en segundo plano: recarga el escritorio dentro de un minuto para verla."
+
+#: includes/class-aivd-widget.php:173
+msgid "Refresh now"
+msgstr "Actualizar ahora"
+
+#: includes/class-aivd-widget.php:179
+msgid "Some sections could not be loaded this time. They will be retried on the next update."
+msgstr "Algunas secciones no se han podido cargar esta vez. Se reintentarán en la próxima actualización."
+
+#. translators: 1: number of tracked queries, 2: list of AI engines, 3: first day, 4: last day.
+#: includes/class-aivd-widget.php:208
+#, php-format
+msgid "Based on %1$s tracked query on %2$s, %3$s – %4$s (UTC). The figures describe how these engines answer your tracked queries, not every search."
+msgid_plural "Based on %1$s tracked queries on %2$s, %3$s – %4$s (UTC). The figures describe how these engines answer your tracked queries, not every search."
+msgstr[0] "Basado en %1$s consulta seguida en %2$s, del %3$s al %4$s (UTC). Las cifras describen cómo responden estos motores a tus consultas seguidas, no a todas las búsquedas."
+msgstr[1] "Basado en %1$s consultas seguidas en %2$s, del %3$s al %4$s (UTC). Las cifras describen cómo responden estos motores a tus consultas seguidas, no a todas las búsquedas."
+
+#: includes/class-aivd-widget.php:227
 msgid "How do ChatGPT, Claude, Perplexity and Google AI talk about your brand?"
 msgstr "¿Cómo hablan de tu marca ChatGPT, Claude, Perplexity y Google IA?"
 
-#: includes/class-aivd-widget.php:114
+#: includes/class-aivd-widget.php:228
 msgid "Connect your Mencoro project to see your Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, right here."
 msgstr "Conecta tu proyecto de Mencoro para ver aquí mismo tu cuota de voz, tasa de mención, sentimiento, competidores y las fuentes que citan las respuestas de IA."
 
-#: includes/class-aivd-widget.php:116
+#: includes/class-aivd-widget.php:230
 msgid "Connect Mencoro"
 msgstr "Conectar Mencoro"
 
-#: includes/class-aivd-widget.php:118
+#: includes/class-aivd-widget.php:232
 msgid "Ask an administrator to connect it in Settings → AI Visibility."
 msgstr "Pide a un administrador que lo conecte en Ajustes → Visibilidad en IA."
 
-#: includes/class-aivd-widget.php:145
+#: includes/class-aivd-widget.php:259
 msgid "Period"
 msgstr "Periodo"
 
 #. translators: %d: number of days, shown on a compact period switch, e.g. "28 d".
-#: includes/class-aivd-widget.php:149
+#: includes/class-aivd-widget.php:263
 #, php-format
 msgid "%d d"
 msgstr "%d d"
 
-#: includes/class-aivd-widget.php:172
-#: includes/class-aivd-widget.php:504
+#: includes/class-aivd-widget.php:286
+#: includes/class-aivd-widget.php:638
 msgid "Share of Voice"
 msgstr "Cuota de voz"
 
-#: includes/class-aivd-widget.php:177
+#: includes/class-aivd-widget.php:291
 msgid "Your share of the brand mentions in AI answers, against the competitors you track."
 msgstr "Tu parte de las menciones de marca en las respuestas de IA, frente a los competidores que sigues."
 
-#: includes/class-aivd-widget.php:180
-#: includes/class-aivd-widget.php:505
+#: includes/class-aivd-widget.php:294
+#: includes/class-aivd-widget.php:639
 msgid "Mention rate"
 msgstr "Tasa de mención"
 
 #. translators: 1: queries with a mention, 2: tracked queries.
-#: includes/class-aivd-widget.php:186
+#: includes/class-aivd-widget.php:300
 #, php-format
 msgid "Share of AI checks where your brand appears. %1$d of %2$d tracked queries mention you."
 msgstr "Porcentaje de comprobaciones de IA en las que aparece tu marca. Te mencionan en %1$d de %2$d consultas seguidas."
 
-#: includes/class-aivd-widget.php:189
-#: includes/class-aivd-widget.php:506
+#: includes/class-aivd-widget.php:303
+#: includes/class-aivd-widget.php:640
 msgid "Average position"
 msgstr "Posición media"
 
-#: includes/class-aivd-widget.php:194
+#: includes/class-aivd-widget.php:308
 msgid "Where your brand appears inside the answer, on average. Lower is better."
 msgstr "En qué lugar de la respuesta aparece tu marca, de media. Cuanto más bajo, mejor."
 
-#: includes/class-aivd-widget.php:197
-#: includes/class-aivd-widget.php:507
+#: includes/class-aivd-widget.php:311
+#: includes/class-aivd-widget.php:641
 msgid "Positivity"
 msgstr "Positividad"
 
-#: includes/class-aivd-widget.php:202
+#: includes/class-aivd-widget.php:316
 msgid "Tone of the mentions, from 0 (negative) to 100 (positive)."
 msgstr "Tono de las menciones, de 0 (negativo) a 100 (positivo)."
 
-#: includes/class-aivd-widget.php:226
+#: includes/class-aivd-widget.php:340
 msgid "no previous period"
 msgstr "sin periodo anterior"
 
-#: includes/class-aivd-widget.php:231
-#: includes/class-aivd-widget.php:508
+#: includes/class-aivd-widget.php:345
+#: includes/class-aivd-widget.php:642
 msgid "pp"
 msgstr "pp"
 
-#: includes/class-aivd-widget.php:234
+#: includes/class-aivd-widget.php:348
 msgid "no change"
 msgstr "sin cambios"
 
 #. translators: %s: amount, e.g. "2.1 pp".
-#: includes/class-aivd-widget.php:240
+#: includes/class-aivd-widget.php:354
 #, php-format
 msgid "Improved by %s against the previous period"
 msgstr "Mejora de %s respecto al periodo anterior"
 
 #. translators: %s: amount, e.g. "2.1 pp".
-#: includes/class-aivd-widget.php:244
+#: includes/class-aivd-widget.php:358
 #, php-format
 msgid "Worse by %s against the previous period"
 msgstr "Empeora %s respecto al periodo anterior"
 
-#: includes/class-aivd-widget.php:256
+#: includes/class-aivd-widget.php:370
 msgid "Share of Voice over time"
 msgstr "Evolución de la cuota de voz"
 
-#: includes/class-aivd-widget.php:271
+#: includes/class-aivd-widget.php:385
 msgid "Not enough days with data to draw a trend yet."
 msgstr "Todavía no hay suficientes días con datos para dibujar la evolución."
 
 #. translators: 1: first value, 2: last value, 3: highest value.
-#: includes/class-aivd-widget.php:313
+#: includes/class-aivd-widget.php:427
 #, php-format
 msgid "Share of Voice went from %1$s to %2$s in this period, with a high of %3$s."
 msgstr "La cuota de voz pasó de %1$s a %2$s en este periodo, con un máximo de %3$s."
 
-#: includes/class-aivd-widget.php:357
+#: includes/class-aivd-widget.php:471
 msgid "You and your competitors"
 msgstr "Tú y tus competidores"
 
-#: includes/class-aivd-widget.php:365
+#: includes/class-aivd-widget.php:479
 msgid "you"
 msgstr "tú"
 
-#: includes/class-aivd-widget.php:388
+#: includes/class-aivd-widget.php:502
 msgid "Positive"
 msgstr "Positivo"
 
-#: includes/class-aivd-widget.php:389
+#: includes/class-aivd-widget.php:503
 msgid "Neutral"
 msgstr "Neutro"
 
-#: includes/class-aivd-widget.php:390
+#: includes/class-aivd-widget.php:504
 msgid "Negative"
 msgstr "Negativo"
 
-#: includes/class-aivd-widget.php:394
+#: includes/class-aivd-widget.php:508
 msgid "Tone of the mentions"
 msgstr "Tono de las menciones"
 
-#: includes/class-aivd-widget.php:417
+#: includes/class-aivd-widget.php:531
 msgid "Sources the AI answers cite"
 msgstr "Fuentes que citan las respuestas de IA"
 
-#: includes/class-aivd-widget.php:424
+#: includes/class-aivd-widget.php:538
 msgid "No cited sources in this period."
 msgstr "No hay fuentes citadas en este periodo."
 
-#: includes/class-aivd-widget.php:435
+#. translators: 1: sources listed, 2: all sources cited in the period.
+#: includes/class-aivd-widget.php:548
+#, php-format
+msgid "The %1$s most cited of %2$s sources in this period."
+msgstr "Las %1$s más citadas de %2$s fuentes en este periodo."
+
+#: includes/class-aivd-widget.php:562
 msgid "your site"
 msgstr "tu web"
 
 #. translators: %s: number of citations.
-#: includes/class-aivd-widget.php:439
+#: includes/class-aivd-widget.php:566
 #, php-format
 msgid "%s citation"
 msgid_plural "%s citations"
 msgstr[0] "%s cita"
 msgstr[1] "%s citas"
 
-#: includes/class-aivd-widget.php:444
-msgid "Your site is not among the most cited sources. These are the sites the AI trusts on your topics: getting mentioned on them is often the fastest way in."
-msgstr "Tu web no está entre las fuentes más citadas. Estas son las webs en las que confía la IA para tus temas: conseguir que te mencionen en ellas suele ser el camino más rápido."
+#. translators: %s: number of sources listed.
+#: includes/class-aivd-widget.php:574
+#, php-format
+msgid "Your site is not in this list, which only shows the top %s. That does not mean it is never cited. Look at the pages cited and whether they cover topics where your content adds value."
+msgstr "Tu sitio no está en esta lista, que solo muestra las %s primeras. Eso no significa que nunca se cite. Revisa las páginas citadas y si tratan temas en los que tu contenido aporta valor."
 
-#: includes/class-aivd-widget.php:462
+#: includes/class-aivd-widget.php:595
 msgid "Queries that moved most"
 msgstr "Consultas que más se han movido"
 
-#: includes/class-aivd-widget.php:464
+#: includes/class-aivd-widget.php:596
+msgid "Share of Voice against the previous period. Small changes can be noise: AI answers vary from day to day."
+msgstr "Cuota de voz frente al periodo anterior. Los cambios pequeños pueden ser ruido: las respuestas de IA varían de un día a otro."
+
+#: includes/class-aivd-widget.php:598
 msgid "Gaining"
 msgstr "Suben"
 
-#: includes/class-aivd-widget.php:465
+#: includes/class-aivd-widget.php:599
 msgid "Losing"
 msgstr "Bajan"
 
-#: includes/class-aivd-widget.php:483
+#: includes/class-aivd-widget.php:617
 msgid "None in this period."
 msgstr "Ninguna en este periodo."
 
-#: includes/class-aivd-widget.php:502
+#: includes/class-aivd-widget.php:636
 msgid "What do these figures mean?"
 msgstr "¿Qué significan estas cifras?"
 
-#: includes/class-aivd-widget.php:504
+#: includes/class-aivd-widget.php:638
 msgid "Your share of the brand mentions in AI answers, against the competitors you track in Mencoro. Higher is better."
 msgstr "Tu parte de las menciones de marca en las respuestas de IA, frente a los competidores que sigues en Mencoro. Cuanto más alta, mejor."
 
-#: includes/class-aivd-widget.php:505
-msgid "Out of every AI answer checked, how many mention your brand. Higher is better."
-msgstr "De todas las respuestas de IA comprobadas, cuántas mencionan tu marca. Cuanto más alta, mejor."
+#: includes/class-aivd-widget.php:639
+msgid "Out of every AI answer checked, how many mention your brand. Higher is better. Mencoro calls it Coverage."
+msgstr "De cada respuesta de IA comprobada, cuántas mencionan tu marca. Cuanto más alta, mejor. En Mencoro se llama Cobertura."
 
-#: includes/class-aivd-widget.php:506
+#: includes/class-aivd-widget.php:640
 msgid "Where your brand appears inside the answer when it is mentioned. 1 means first. Lower is better."
 msgstr "En qué lugar de la respuesta aparece tu marca cuando te mencionan. 1 es la primera. Cuanto más bajo, mejor."
 
-#: includes/class-aivd-widget.php:507
-msgid "Tone of the mentions, from 0 (all negative) to 100 (all positive)."
-msgstr "Tono de las menciones, de 0 (todas negativas) a 100 (todas positivas)."
+#: includes/class-aivd-widget.php:641
+msgid "Tone of the mentions, from 0 (all negative) to 100 (all positive); 50 means they balance out. Mencoro calls it Favorability."
+msgstr "Tono de las menciones, de 0 (todas negativas) a 100 (todas positivas); 50 significa que se compensan. En Mencoro se llama Favorabilidad."
 
-#: includes/class-aivd-widget.php:508
+#: includes/class-aivd-widget.php:642
 msgid "Percentage points: the change of a percentage against the previous period of the same length."
 msgstr "Puntos porcentuales: cuánto cambia un porcentaje respecto al periodo anterior de la misma duración."
 
+#: includes/class-aivd-widget.php:643
+msgid "Sample"
+msgstr "Muestra"
+
+#: includes/class-aivd-widget.php:643
+msgid "Every figure comes from the queries, countries and engines you track in Mencoro. A mention is not a click, a visit or a sale, and a change is a signal to look into, not proof of its cause."
+msgstr "Todas las cifras salen de las consultas, países y motores que sigues en Mencoro. Una mención no es un clic, una visita ni una venta, y un cambio es una señal para investigar, no la prueba de su causa."
+
 #. translators: 1: link to Mencoro, 2: time since the last update, e.g. "2 hours".
-#: includes/class-aivd-widget.php:526
+#: includes/class-aivd-widget.php:661
 #, php-format
 msgid "Data from %1$s · updated %2$s ago"
 msgstr "Datos de %1$s · actualizado hace %2$s"
 
-#: includes/class-aivd-widget.php:531
+#: includes/class-aivd-widget.php:666
 msgid "Refresh"
 msgstr "Actualizar"

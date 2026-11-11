@@ -6,20 +6,21 @@ How the plugin is built, how to extend it and how to contribute.
 
 ## Architecture
 
-No build step, no Composer dependencies, no JavaScript. PHP 7.4+, WordPress 6.5+.
+No build step, no runtime dependencies, no JavaScript. PHP 7.4+, WordPress 6.5+. Composer is only used for development tools (PHPCS, PHPUnit).
 
 ```
 ai-visibility-dashboard/
 ├── ai-visibility-dashboard.php   Bootstrap: constants, text domain, activation, action link
 ├── includes/
-│   ├── class-aivd-settings.php   Stored settings, key resolution, capability, cache versioning
+│   ├── class-aivd-settings.php   Stored settings, key resolution, capability, cache flush
 │   ├── class-aivd-api.php        Read-only HTTP client for the Mencoro API
-│   ├── class-aivd-data.php       Calls the API, shapes the payload, caches it
+│   ├── class-aivd-data.php       Calls the API, shapes the payload, keeps the last valid one, states
+│   ├── class-aivd-lock.php       Atomic lock so only one update runs at a time
 │   ├── class-aivd-widget.php     Renders the Dashboard widget (server-side HTML + inline SVG)
 │   └── class-aivd-admin.php      Settings screen and admin-post handlers
 ├── assets/admin.css              Loaded only on the Dashboard and the settings screen
 ├── languages/                    .pot, es_ES .po/.mo/.l10n.php
-└── uninstall.php                 Removes options and transients, multisite aware
+└── uninstall.php                 Removes options, transients, locks and cron events, multisite aware
 ```
 
 Prefixes: `aivd_` for functions, options, transients, hooks and actions; `AIVD_` for classes and constants.
@@ -29,23 +30,32 @@ Prefixes: `aivd_` for functions, options, transients, hooks and actions; `AIVD_`
 ```
 Dashboard load
   └─ AIVD_Widget::render()
-       └─ AIVD_Data::get( $range )
-            ├─ cache hit  → payload (or a remembered error)
-            └─ cache miss → AIVD_Data::build()
-                 ├─ GET  projects/{id}                 name, domains, brand, competitor names
-                 ├─ GET  projects/{id}/available-filters   engines the project tracks
-                 ├─ GET  projects/{id}/metrics         headline figures, sentiment, competitor SoV
-                 ├─ GET  projects/{id}/timeseries      Share of Voice per day or week
-                 ├─ GET  projects/{id}/cited-sources   top 6 domains
-                 ├─ GET  projects/{id}/metrics/movers  top 3 gains  (sortOrder=desc)
-                 └─ GET  projects/{id}/metrics/movers  top 3 losses (sortOrder=asc)
+       └─ AIVD_Data::state( $range )
+            ├─ fresh snapshot           → render it (status fresh, partial or empty)
+            ├─ out-of-date snapshot     → render it with its age (status stale)
+            │                             and schedule one WP-Cron event: aivd_background_refresh
+            ├─ nothing yet, lock free   → refresh now, 12 s budget (the only wait)
+            ├─ nothing yet, lock held   → status pending
+            └─ nothing, backing off     → status error, with the next attempt time
+
+refresh (under AIVD_Lock, per context)
+  └─ AIVD_Data::build()
+       ├─ GET  projects/{id}                 name, domains, brand, competitor names   ┐
+       ├─ GET  projects/{id}/available-filters   engines the project tracks           ├ essential
+       ├─ GET  projects/{id}/metrics         headline figures, sentiment, competitors ┘
+       ├─ GET  projects/{id}/timeseries      Share of Voice per day or week           ┐
+       ├─ GET  projects/{id}/cited-sources   top 6 domains, and the total             │ secondary
+       ├─ GET  projects/{id}/metrics/movers  top 3 gains  (sortOrder=desc)            │
+       └─ GET  projects/{id}/metrics/movers  top 3 losses (sortOrder=asc)             ┘
 ```
 
 All paths are under `https://api.mencoro.com/api/v1/organizations/{organizationId}/`. Window parameters: `dateFrom`, `dateTo` (UTC, `Y-m-d`), `engines` (comma-separated). The time series uses `granularity=daily`, or `weekly` for 90 days; movers use `sortBy=trend_share_of_voice&limit=3`; sources use `groupBy=domain&limit=6`.
 
-If `projects/{id}`, `available-filters` or `metrics` fail, the whole widget shows the error. If the time series, sources or movers fail, only that section shows it.
+If an essential request fails, the update fails: the previous payload is kept and the error recorded. If a secondary one fails, or does not fit in the time budget, only that section shows a message and the payload is marked partial (`failed_sections`); partial payloads are refreshed again after 15 minutes.
 
-The settings screen also uses `GET /api/v1/me` (key check on save), `GET /api/v1/organizations` and `GET /api/v1/organizations/{id}/projects` (project picker).
+Each request waits 10 s at most (`aivd_http_timeout`), follows no redirects and reads 1 MB at most. Error messages never include the response body.
+
+The settings screen also uses `GET /api/v1/me` (key check on save; the identity it returns is not stored), `GET /api/v1/organizations` and `GET /api/v1/organizations/{id}/projects` (project picker).
 
 Reference: [Mencoro API docs](https://mencoro.com/api-docs/) and the OpenAPI contract in [mencoro/mencoro-api-sdk](https://github.com/mencoro/mencoro-api-sdk).
 
@@ -53,15 +63,19 @@ Reference: [Mencoro API docs](https://mencoro.com/api-docs/) and the OpenAPI con
 
 `AIVD_Settings::AI_ENGINES` = `chatgpt`, `claude`, `perplexity`, `google_ai_overview`, `google_ai_mode`. The engines sent are *(ticked in settings, or all)* ∩ *(project's available filters)* ∩ `AI_ENGINES`. `google_serp` and `google_shopping` are never sent.
 
-### Caching
+### Storage and states
 
-| What | Key | Lifetime |
+| What | Where | Lifetime |
 |---|---|---|
-| Widget payload | `aivd_` + md5(cache version, org, project, range, engines, md5(key), UTC date) | 6 h (`aivd_cache_ttl`) |
-| Failed fetch | same key | 5 min |
-| Project list (settings) | `aivd_projects_` + md5(cache version, key) | 10 min |
+| Last valid payload + last attempt (error, failures, next retry) | Option `aivd_snapshot_{md5(org, project, range, engines, wp_hash(key))}`, not autoloaded; index in `aivd_snapshots`; at most 6 | Fresh for 6 h (`aivd_cache_ttl`) and within the same UTC day; 15 min if partial. Kept until replaced or purged. |
+| Update lock | Option `aivd_lock_refresh_{context}`, read and written with direct queries (`INSERT IGNORE`) so an object cache cannot hide it | 120 s, or until the update ends |
+| Project list (settings) | Transient `aivd_projects_` + md5(cache version, key) | 10 min |
 
-**Refresh** and saving the settings bump the `aivd_cache_version` option instead of deleting transients one by one, so invalidation also works with persistent object caches. Old entries simply expire.
+`AIVD_Data::state( $range )` returns `status` (`fresh`, `partial`, `empty`, `stale`, `pending`, `error`), `payload`, `partial`, `fetched_at`, `expires_at`, `error`, `retry_at`, `refreshing` and `cron_late`. `AIVD_Data::peek()` returns the same without fetching or scheduling. `AIVD_Data::get( $range )` is kept for compatibility and returns the last payload or a `WP_Error`.
+
+Backoff after an error: `Retry-After` for 429 (manual refresh included), 15 min for 401/403/404, then 1, 2, 4… up to 30 min for other errors. A manual **Refresh** runs at most once every 30 s per view.
+
+Saving the settings bumps `aivd_cache_version` (project list) and deletes every snapshot and scheduled update, so nothing from a previous key or project is ever shown.
 
 ## Hooks and constants
 
@@ -74,12 +88,24 @@ add_filter( 'aivd_widget_capability', function ( $capability ) {
 	return 'view_ai_visibility'; // e.g. a custom capability given to a client role.
 } );
 
-// How long fetched data is cached, in seconds (minimum 60). Default: 6 hours.
+// How long fetched data stays fresh, in seconds (minimum 60). Default: 6 hours.
 add_filter( 'aivd_cache_ttl', function () {
 	return 12 * HOUR_IN_SECONDS;
 } );
 
+// Seconds to wait for one response (2 to 30). Default: 10.
+add_filter( 'aivd_http_timeout', function () {
+	return 15;
+} );
+
+// Seconds one update may wait in total (minimum 5).
+// Default: 12 while someone waits for the page ('interactive'), 25 in WP-Cron ('background').
+add_filter( 'aivd_refresh_budget', function ( $budget, $mode ) {
+	return 'background' === $mode ? 40 : $budget;
+}, 10, 2 );
+
 // API base URL, without trailing slash. Default: https://api.mencoro.com
+// Must be HTTPS, or HTTP on localhost / 127.0.0.1 / ::1; anything else falls back to the default.
 add_filter( 'aivd_api_base', function () {
 	return 'http://127.0.0.1:8898'; // e.g. a local mock while developing.
 } );
@@ -95,7 +121,9 @@ add_filter( 'aivd_api_base', function () {
 
 ### Admin actions
 
-`admin-post.php?action=aivd_save` (settings form, nonce `aivd_save`, `manage_options`) and `admin-post.php?action=aivd_refresh` (nonce `aivd_refresh`, widget capability). The widget period is a read-only `?aivd_range=7|28|90` on the Dashboard URL.
+`admin-post.php?action=aivd_save` (settings form, nonce `aivd_save`, `manage_options`) and `admin-post.php?action=aivd_refresh` (nonce `aivd_refresh`, widget capability, rate-limited). The widget period is a read-only `?aivd_range=7|28|90` on the Dashboard URL.
+
+WP-Cron event: `aivd_background_refresh` with the period as its only argument. It is unscheduled on deactivation and uninstall.
 
 ## Developing locally
 
@@ -132,15 +160,21 @@ wp i18n make-php languages
 
 Commit the `.po`, `.mo` and `.l10n.php` files. Spanish (Spain) uses the informal *tú*, like WordPress core's es_ES.
 
+## Tests
+
+See [CONTRIBUTING.md](../../CONTRIBUTING.md): `bin/install-wp-tests.sh` prepares WordPress with the SQLite drop-in, and `composer test` runs PHPUnit against a fake Mencoro API (`pre_http_request`), single site or multisite (`WP_MULTISITE=1`).
+
 ## Building a release
 
-Development files (`docs/`, the READMEs, `phpcs.xml.dist`, git files) are marked `export-ignore` in `.gitattributes`, so the zip GitHub builds for a tag, and `git archive`, contain only the plugin:
+Development files (`docs/`, `tests/`, `bin/`, `.github/`, `.wordpress-org/`, the READMEs, Composer and PHPUnit files) are marked `export-ignore` in `.gitattributes`, so the zip GitHub builds for a tag, and `git archive`, contain only the plugin:
 
 ```bash
-git archive --format=zip --prefix=ai-visibility-dashboard/ -o ai-visibility-dashboard-1.0.0.zip v1.0.0
+git archive --format=zip --prefix=ai-visibility-dashboard/ -o ai-visibility-dashboard-1.0.1.zip v1.0.1
 ```
 
-Before tagging: bump `Version` in the plugin header, `AIVD_VERSION`, `Stable tag` in `readme.txt`, and add a changelog entry.
+Before tagging: bump `Version` in the plugin header, `AIVD_VERSION`, `Stable tag` in `readme.txt`, add a changelog entry and an upgrade notice, regenerate the translations, and run Plugin Check on the zip.
+
+WordPress.org images (icon, banner, screenshots) live in `.wordpress-org/`. They go in the top-level `assets/` folder of the SVN repository, next to `trunk/` and `tags/`, never inside the plugin.
 
 ## Contributing
 

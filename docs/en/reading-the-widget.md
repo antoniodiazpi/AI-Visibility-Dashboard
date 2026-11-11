@@ -67,14 +67,14 @@ How many of your mentions were positive, neutral or negative, as a bar and as nu
 
 ## Sources the AI answers cite
 
-The six domains the AI answers cited most in the period, with the number of citations. These are the sites the engines *trust on your topics*.
+The six domains the AI answers cited most in the period, with the number of citations, out of all the sources cited. They show where the answers to *your tracked queries* got their information; being cited is a correlation, not proof that an engine trusts a site.
 
 - If one of them is your site, it is marked **your site**. "Your site" means any domain configured in the Mencoro project, or this WordPress site's own domain (with or without `www.`).
-- If your site is not in the list, a yellow tip says so.
+- If your site is not in the list, a note says so, and reminds you that only the top six are listed: your site may still be cited further down.
 
 **What to do with it:** this is often the most actionable block.
 
-- **Your site is missing:** the engines are learning about your topic elsewhere. Getting your brand mentioned on those domains (an article, a listing, a comparison, an expert quote, an answer in a community) is usually faster than waiting for your own pages to be cited.
+- **Your site is missing:** look at the pages cited for your queries and ask whether your content covers those topics with evidence of its own. Relevant, genuine coverage on those sites can help; buying or swapping links does not, and the data cannot tell you which action will move the figure.
 - **A forum or community is high:** people's questions there shape the answers. Being genuinely present matters more than links.
 - **Your site is there:** find out which of your pages get cited (Mencoro can group sources by page) and keep them accurate and up to date.
 
@@ -115,6 +115,6 @@ A collapsible glossary at the bottom of the widget repeats the definitions above
 Two layers:
 
 1. **Mencoro** checks your tracked queries on the schedule set in your Mencoro project; with the usual daily frequency, numbers move once a day.
-2. **The plugin** keeps what it fetched for 6 hours, and starts fresh each UTC day. **Refresh** skips the wait.
+2. **The plugin** keeps what it fetched fresh for 6 hours, and updates at the start of each UTC day. Out-of-date figures stay on screen, labelled with their age, while they update in the background. **Refresh** updates now (at most once every 30 seconds).
 
 So refreshing many times a day rarely shows anything new; it is useful right after you change something in Mencoro.

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="AI Visibility Dashboard">
+  <title>AI Visibility Dashboard</title>
+  <!-- "Presence signal": three bars of an observed trend inside an open ring, with the dot of a detected mention. Original artwork, GPLv2 or later. -->
+  <rect width="256" height="256" rx="56" fill="#2257D7"/>
+  <path d="M 200.4 89.5 A 82 82 0 1 1 145.0 47.8" fill="none" stroke="#FFFFFF" stroke-width="20" stroke-linecap="round"/>
+  <circle cx="177.3" cy="62.5" r="15" fill="#F9BD6C"/>
+  <rect x="80" y="126" width="24" height="44" rx="12" fill="#FFFFFF"/>
+  <rect x="116" y="104" width="24" height="66" rx="12" fill="#FFFFFF"/>
+  <rect x="152" y="82" width="24" height="88" rx="12" fill="#FFFFFF"/>
+</svg>

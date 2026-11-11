@@ -21,10 +21,15 @@ Every message the plugin can show, what causes it and how to fix it. Messages ap
 | *Mencoro could not find this project with this key. Choose the project again in the settings.* | The project was archived or deleted, or the key changed to one from another account (HTTP 404). | Go to **Settings → AI Visibility** and pick the project again. |
 | *Too many requests to Mencoro. Try again in … seconds.* | Mencoro is rate limiting (HTTP 429). | Wait the time shown and click **Try again**. If it repeats, check that nothing else is using the same key heavily. |
 | *Mencoro answered with an error (HTTP …).* | An error on Mencoro's side (usually 5xx). | Try again later. If it persists, check Mencoro's status or contact their support. |
+| *Mencoro did not answer in time. The widget will try again later.* | Mencoro took longer than 10 seconds (or the update ran out of its time budget). | Usually temporary: the widget retries on its own. If it persists, see [Connection problems](#connection-problems). |
+| *Mencoro answered with an unexpected redirect (HTTP 3xx).* | Something between your server and Mencoro (a proxy, a firewall) rewrote the request. The plugin never follows redirects, so the key cannot reach another host. | Check the server's proxy settings, or ask your host. |
+| *Last data available, from … ago.* | The figures are out of date and an update is pending or failed; they stay on screen meanwhile. | Nothing, if an update is running. If the message says automatic updates do not seem to run, WP-Cron is not working on the site: click **Refresh now**, or ask your host to call `wp-cron.php` from the server's cron. |
 | *Mencoro sent a response the plugin could not read.* | The response was not valid JSON — often a proxy or firewall answering instead of Mencoro. | See [Connection problems](#connection-problems). |
 | *Add your Mencoro API key in the settings.* | The key is missing (for example, a removed `wp-config.php` constant). | Add the key again. |
 
-After fixing the cause, click **Try again** in the widget. Errors are remembered for **5 minutes** so a broken key does not hit Mencoro on every page load; **Try again** clears that.
+After fixing the cause, click **Try again** in the widget (or save the settings). Until then the plugin waits before asking Mencoro again, so a broken key does not hit the API on every page load: the time in `Retry-After` for *too many requests*, 15 minutes for key or project errors, and 1, 2, 4… up to 30 minutes for server errors and timeouts. If there were figures before the error, they stay on screen with their age.
+
+**Settings → AI Visibility → Connection status** shows the last update, the last error and the next automatic attempt.
 
 ## The widget does not appear
 
@@ -38,7 +43,7 @@ Check, in this order:
 
 1. **Engines.** The widget only counts AI engines, never classic Google results or Shopping, and only the engines ticked in the settings. Mencoro's own views may include more.
 2. **Period.** "28 days" is the last 28 UTC days, today included, compared with the 28 days before.
-3. **Cache.** The widget may be up to 6 hours behind. Click **Refresh**.
+3. **Freshness.** The widget may be up to 6 hours behind; when it is, it says how old the figures are. Click **Refresh**.
 4. **Recalculation.** If the widget says *Mencoro is recalculating part of this period*, the figures are still settling on both sides.
 
 ## The figures do not change from day to day

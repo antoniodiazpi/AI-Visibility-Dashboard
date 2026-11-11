@@ -21,10 +21,15 @@ Todos los mensajes que puede mostrar el plugin, qué los provoca y cómo arregla
 | *Mencoro no encuentra este proyecto con esta clave. Vuelve a elegir el proyecto en los ajustes.* | El proyecto se archivó o se borró, o se cambió la clave por una de otra cuenta (HTTP 404). | Ve a **Ajustes → Visibilidad en IA** y vuelve a elegir el proyecto. |
 | *Demasiadas peticiones a Mencoro. Inténtalo de nuevo en … segundos.* | Mencoro está limitando las peticiones (HTTP 429). | Espera el tiempo indicado y pulsa **Reintentar**. Si se repite, comprueba que nada más esté usando mucho la misma clave. |
 | *Mencoro ha respondido con un error (HTTP …).* | Un error en el lado de Mencoro (normalmente 5xx). | Inténtalo más tarde. Si sigue, consulta el estado de Mencoro o escribe a su soporte. |
+| *Mencoro no ha respondido a tiempo. El widget lo intentará de nuevo más tarde.* | Mencoro ha tardado más de 10 segundos (o la actualización ha agotado su margen de tiempo). | Suele ser temporal: el widget lo reintenta solo. Si persiste, mira [Problemas de conexión](#problemas-de-conexión). |
+| *Mencoro ha respondido con una redirección inesperada (HTTP 3xx).* | Algo entre tu servidor y Mencoro (un proxy, un cortafuegos) ha reescrito la petición. El plugin nunca sigue redirecciones, así que la clave no puede llegar a otro servidor. | Revisa la configuración de proxy del servidor o pregunta a tu hosting. |
+| *Últimos datos disponibles, de hace…* | Las cifras están desactualizadas y hay una actualización pendiente o fallida; mientras, siguen en pantalla. | Nada, si hay una actualización en marcha. Si el aviso dice que las actualizaciones automáticas no parecen funcionar, WP-Cron no va en el sitio: pulsa **Actualizar ahora** o pide a tu hosting que llame a `wp-cron.php` desde el cron del servidor. |
 | *Mencoro envió una respuesta que el plugin no ha podido leer.* | La respuesta no era JSON válido; muchas veces es un proxy o un cortafuegos respondiendo en lugar de Mencoro. | Mira [Problemas de conexión](#problemas-de-conexión). |
 | *Añade tu clave de API de Mencoro en los ajustes.* | Falta la clave (por ejemplo, se quitó la constante de `wp-config.php`). | Vuelve a añadir la clave. |
 
-Cuando arregles la causa, pulsa **Reintentar** en el widget. Los errores se recuerdan **5 minutos** para que una clave rota no consulte a Mencoro en cada carga de página; **Reintentar** borra ese recuerdo.
+Cuando arregles la causa, pulsa **Reintentar** en el widget (o guarda los ajustes). Mientras tanto el plugin espera antes de volver a consultar a Mencoro, para que una clave rota no llame a la API en cada carga: el tiempo de `Retry-After` en *demasiadas peticiones*, 15 minutos en errores de clave o proyecto, y 1, 2, 4… hasta 30 minutos en errores del servidor y tiempos de espera agotados. Si había cifras antes del error, siguen en pantalla con su antigüedad.
+
+**Ajustes → Visibilidad en IA → Estado de la conexión** muestra la última actualización, el último error y el próximo intento automático.
 
 ## El widget no aparece
 
@@ -38,7 +43,7 @@ Revisa, en este orden:
 
 1. **Motores.** El widget solo cuenta motores de IA, nunca los resultados clásicos de Google ni Shopping, y solo los marcados en los ajustes. Las vistas de Mencoro pueden incluir más.
 2. **Periodo.** "28 días" son los últimos 28 días UTC, hoy incluido, comparados con los 28 anteriores.
-3. **Caché.** El widget puede ir hasta 6 horas por detrás. Pulsa **Actualizar**.
+3. **Antigüedad.** El widget puede ir hasta 6 horas por detrás; cuando ocurre, indica la antigüedad de las cifras. Pulsa **Actualizar**.
 4. **Recálculo.** Si el widget dice *Mencoro está recalculando parte de este periodo*, las cifras aún se están asentando en los dos lados.
 
 ## Las cifras no cambian de un día para otro

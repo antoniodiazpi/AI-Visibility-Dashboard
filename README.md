@@ -11,9 +11,9 @@
 
 A free WordPress plugin that adds an **AI visibility** widget to the Dashboard, fed by your [Mencoro](https://mencoro.com/) project. Generative Engine Optimization (GEO) numbers usually live in a separate tool nobody opens; this puts them where site owners, editors and clients already look every day.
 
-<p align="center"><img src="docs/widget.png" alt="AI visibility widget on the WordPress Dashboard, with Share of Voice, mention rate, average position, positivity, a Share of Voice trend, competitors, sentiment, cited sources and the queries that moved most" width="460"></p>
+<p align="center"><img src=".wordpress-org/screenshot-1.png" alt="AI visibility widget on the WordPress Dashboard, with Share of Voice, mention rate, average position, positivity, a Share of Voice trend, competitors, sentiment, cited sources and the queries that moved most" width="460"></p>
 
-<sub>Screenshot with sample data, in Spanish.</sub>
+<sub>Screenshot with fictitious sample data.</sub>
 
 ## What it shows
 
@@ -45,7 +45,7 @@ Engines: ChatGPT, Claude, Perplexity, Google AI Overviews and Google AI Mode —
 3. Go to **Settings → AI Visibility**, paste your API key and click **Save and check connection**.
 4. Choose your project, save, and open the **Dashboard**.
 
-<p align="center"><img src="docs/settings.png" alt="Settings screen: API key, project, AI engines, default period and who sees the widget" width="720"></p>
+<p align="center"><img src=".wordpress-org/screenshot-2.png" alt="Settings screen: API key, project, AI engines, default period and who sees the widget" width="720"></p>
 
 ## For agencies
 
@@ -64,8 +64,10 @@ Engines: ChatGPT, Claude, Perplexity, Google AI Overviews and Google AI Mode —
 - The plugin only talks to `api.mencoro.com`, with your key, using **read-only** requests. It never creates, changes or deletes anything in Mencoro.
 - It sends nothing about your site or your visitors, adds nothing to the front end and loads no external scripts. The widget is rendered on the server: no JavaScript at all.
 - The key is never printed back on the page (only its last four characters), and the option that stores it is not autoloaded.
-- Results are cached for 6 hours (Mencoro checks most queries once a day). A refresh costs 7 API requests; failures are cached for 5 minutes so a bad key does not hammer the API.
-- Uninstalling removes the settings, the key and the cached data.
+- Results stay fresh for 6 hours (Mencoro checks most queries once a day). A refresh costs 7 API requests.
+- **The Dashboard never waits for Mencoro when it has something to show.** Out-of-date figures are shown with their age while one background update (WP-Cron) fetches new ones. If Mencoro is slow or down, the last valid figures stay on screen; the plugin honours `Retry-After` and backs off from 1 to 30 minutes on other errors. Only one update runs at a time.
+- Error messages never copy what the API answered, redirects are not followed and every field is type-checked before it is shown.
+- Uninstalling removes the settings, the key, the stored figures and scheduled updates, on every site of a network.
 
 ## For developers
 
@@ -73,12 +75,14 @@ Engines: ChatGPT, Claude, Perplexity, Google AI Overviews and Google AI Mode —
 |---|---|
 | `MENCORO_API_KEY` (constant or env) | API key, takes precedence over the stored one. |
 | `aivd_widget_capability` (filter) | Capability needed to see the widget. Default `manage_options`, or `edit_others_posts` when editors are allowed. |
-| `aivd_cache_ttl` (filter) | Cache lifetime in seconds. Default `6 * HOUR_IN_SECONDS`. |
-| `aivd_api_base` (filter) / `AIVD_API_BASE` (constant) | API base URL, e.g. to test against a mock server. |
+| `aivd_cache_ttl` (filter) | How long figures stay fresh, in seconds. Default `6 * HOUR_IN_SECONDS`. |
+| `aivd_http_timeout` (filter) | Seconds to wait for one response (2–30). Default 10. |
+| `aivd_refresh_budget` (filter) | Seconds one update may wait in total: 12 while someone waits for the page, 25 in the background. |
+| `aivd_api_base` (filter) / `AIVD_API_BASE` (constant) | API base URL, e.g. to test against a mock server. Must be HTTPS, or HTTP on localhost. |
 
 Endpoints used (all `GET`, see the [Mencoro API docs](https://mencoro.com/api-docs/)): `me`, `organizations`, `projects`, `projects/{id}`, `available-filters`, `metrics`, `timeseries`, `cited-sources`, `metrics/movers`.
 
-Coding standards: `phpcs --standard=phpcs.xml.dist` (WordPress-Extra + WordPress-Docs) passes clean.
+Coding standards, PHPCompatibility (PHP 7.4+) and a PHPUnit suite on the WordPress test library run in CI; see [CONTRIBUTING.md](CONTRIBUTING.md). Plugin Check 2.2.0 reports no errors.
 
 ## Translations
 
