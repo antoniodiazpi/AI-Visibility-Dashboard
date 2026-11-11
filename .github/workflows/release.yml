@@ -1,16 +1,22 @@
 name: Release
 
 # Builds the plugin zip with `git archive` (only the files WordPress needs,
-# see .gitattributes) and publishes a GitHub release with it.
+# see .gitattributes) and publishes a GitHub release with it. Three ways in:
 #
-# - Push a tag vX.Y.Z, or
-# - run it by hand (Actions → Release → Run workflow) with the version: it
-#   then creates the tag on the chosen branch or commit.
+# - Automatically, when CI passes on main and the version in readme.txt
+#   (Stable tag) has no release yet: merging a version bump releases it.
+# - Pushing a tag vX.Y.Z.
+# - By hand: Actions → Release → Run workflow, with the version (1.2.3 or
+#   v1.2.3); it then creates the tag on the chosen branch or commit.
 #
 # The version must match the plugin header, AIVD_VERSION and the Stable tag
 # of readme.txt; the release notes come from that version's changelog entry.
 
 on:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
+    branches: [main]
   push:
     tags: ['v*']
   workflow_dispatch:
@@ -32,44 +38,54 @@ concurrency:
 
 jobs:
   release:
+    # From CI, only a green run of a push to main.
+    if: >-
+      github.event_name != 'workflow_run' ||
+      (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     env:
       EVENT: ${{ github.event_name }}
       INPUT_VERSION: ${{ inputs.version }}
-      INPUT_TARGET: ${{ inputs.target }}
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
-          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.target || github.ref }}
+          ref: ${{ github.event_name == 'workflow_dispatch' && inputs.target || (github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref) }}
 
       - name: Resolve and check the version
         id: version
         run: |
-          if [ "$EVENT" = "workflow_dispatch" ]; then
-            VERSION="$INPUT_VERSION"
-          else
-            VERSION="${GITHUB_REF_NAME#v}"
-          fi
+          STABLE=$(sed -n 's/^Stable tag: *//p' readme.txt)
+          case "$EVENT" in
+            workflow_dispatch) VERSION="${INPUT_VERSION#v}" ;;
+            push)              VERSION="${GITHUB_REF_NAME#v}" ;;
+            *)                 VERSION="$STABLE" ;;
+          esac
           if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "::error::'$VERSION' is not a version like 1.2.3"; exit 1
           fi
+          if gh release view "v$VERSION" >/dev/null 2>&1; then
+            if [ "$EVENT" = "workflow_run" ]; then
+              echo "v$VERSION is already released: nothing to do."
+              echo "skip=true" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            echo "::error::Release v$VERSION already exists"; exit 1
+          fi
           HEADER=$(sed -n 's/^ \* Version: *//p' ai-visibility-dashboard.php)
           CONSTANT=$(sed -n "s/^define( 'AIVD_VERSION', '\(.*\)' );/\1/p" ai-visibility-dashboard.php)
-          STABLE=$(sed -n 's/^Stable tag: *//p' readme.txt)
-          echo "header=$HEADER constant=$CONSTANT stable=$STABLE"
+          echo "version=$VERSION header=$HEADER constant=$CONSTANT stable=$STABLE"
           if [ "$HEADER" != "$VERSION" ] || [ "$CONSTANT" != "$VERSION" ] || [ "$STABLE" != "$VERSION" ]; then
-            echo "::error::Version mismatch: tag $VERSION, header $HEADER, AIVD_VERSION $CONSTANT, Stable tag $STABLE"; exit 1
-          fi
-          if gh release view "v$VERSION" >/dev/null 2>&1; then
-            echo "::error::Release v$VERSION already exists"; exit 1
+            echo "::error::Version mismatch: release $VERSION, header $HEADER, AIVD_VERSION $CONSTANT, Stable tag $STABLE"; exit 1
           fi
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Check PHP syntax
+        if: steps.version.outputs.skip != 'true'
         run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
 
       - name: Build the zip
+        if: steps.version.outputs.skip != 'true'
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
@@ -85,6 +101,7 @@ jobs:
           cat "$ZIP.sha256"
 
       - name: Write the release notes
+        if: steps.version.outputs.skip != 'true'
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
@@ -101,6 +118,7 @@ jobs:
           cat notes.md
 
       - name: Publish the release
+        if: steps.version.outputs.skip != 'true'
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
