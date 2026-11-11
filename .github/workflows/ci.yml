@@ -1,0 +1,64 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  standards:
+    name: Coding standards
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          tools: composer
+          coverage: none
+      - run: composer install --no-interaction --no-progress
+      - run: composer phpcs
+      - run: composer compat
+
+  lint:
+    name: PHP ${{ matrix.php }} syntax
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        php: ['7.4', '8.0', '8.1', '8.2', '8.3', '8.4']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          coverage: none
+      - run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+  tests:
+    name: PHPUnit (WP ${{ matrix.wp }}, PHP ${{ matrix.php }}${{ matrix.multisite && ', multisite' || '' }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { wp: '6.5.14', lib: '~6.5.0', php: '7.4', multisite: false }
+          - { wp: '7.1.4', lib: '~7.1.0', php: '8.3', multisite: false }
+          - { wp: '7.1.4', lib: '~7.1.0', php: '8.3', multisite: true }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          extensions: pdo_sqlite, sqlite3
+          tools: composer
+          coverage: none
+      - run: composer install --no-interaction --no-progress
+      - name: Match the WordPress test library to the WordPress version
+        run: composer update --no-interaction --no-progress --with "wp-phpunit/wp-phpunit:${{ matrix.lib }}" wp-phpunit/wp-phpunit
+      - run: bin/install-wp-tests.sh "$RUNNER_TEMP/wp" "${{ matrix.wp }}"
+      - run: vendor/bin/phpunit
+        env:
+          WP_CORE_DIR: ${{ runner.temp }}/wp/wordpress
+          WP_MULTISITE: ${{ matrix.multisite && '1' || '0' }}
