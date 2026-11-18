@@ -1,10 +1,10 @@
-=== AI Visibility Dashboard for Mencoro ===
-Contributors: trailseo
+=== TrailSEO AI Visibility for Mencoro ===
+Contributors: pindi
 Tags: ai, seo, geo, chatgpt, dashboard
 Requires at least: 6.5
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ See how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right i
 
 == Description ==
 
-AI Visibility Dashboard adds an **AI visibility** widget to the WordPress Dashboard, fed by your Mencoro project. Generative Engine Optimization (GEO) figures usually live in a separate tool nobody opens; this puts them where site owners, editors and clients already look every day.
+TrailSEO AI Visibility adds an **AI visibility** widget to the WordPress Dashboard, fed by your Mencoro project. Generative Engine Optimization (GEO) figures usually live in a separate tool nobody opens; this puts them where site owners, editors and clients already look every day.
 
 **What the widget shows**
 
@@ -44,7 +44,7 @@ The figures describe how these engines answer the queries you track in Mencoro, 
 
 Translation ready: translations are delivered through translate.wordpress.org.
 
-This is an independent plugin built on Mencoro's public API; it is not an official Mencoro product. Source code and documentation: [github.com/antoniodiazpi/AI-Visibility-Dashboard](https://github.com/antoniodiazpi/AI-Visibility-Dashboard).
+TrailSEO AI Visibility is an independent plugin by TrailSEO, built on Mencoro's public API. It is not made, endorsed or supported by Mencoro. Source code and documentation: [github.com/antoniodiazpi/AI-Visibility-Dashboard](https://github.com/antoniodiazpi/AI-Visibility-Dashboard).
 
 == External services ==
 
@@ -103,6 +103,11 @@ Use the `aivd_cache_ttl` filter, in seconds.
 
 == Changelog ==
 
+= 1.0.2 =
+* Renamed to TrailSEO AI Visibility for Mencoro. The plugin folder and text domain are now `trailseo-ai-visibility`; settings and data are kept.
+* Translation files are no longer bundled: translations come from translate.wordpress.org.
+* If you installed an earlier version from GitHub, deactivate it before activating this one, then remove the old `ai-visibility-dashboard` folder by hand (not with Delete, which would erase the settings both versions share).
+
 = 1.0.1 =
 * Reliability: the last valid figures stay on screen when Mencoro is slow or down, with their age; out-of-date data updates in the background instead of making the Dashboard wait.
 * Reliability: only one update runs at a time; Mencoro's Retry-After is respected and other errors back off from 1 to 30 minutes.
@@ -118,6 +123,9 @@ Use the `aivd_cache_ttl` filter, in seconds.
 * First release.
 
 == Upgrade Notice ==
+
+= 1.0.2 =
+New name, TrailSEO AI Visibility for Mencoro. Installs from GitHub: deactivate the old version first and remove its folder by hand to keep your settings.
 
 = 1.0.1 =
 Keeps your last figures when Mencoro is slow or down, never makes the Dashboard wait when it has data, and hardens how errors and the API key are handled.

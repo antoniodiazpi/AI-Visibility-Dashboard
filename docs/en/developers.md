@@ -9,8 +9,8 @@ How the plugin is built, how to extend it and how to contribute.
 No build step, no runtime dependencies, no JavaScript. PHP 7.4+, WordPress 6.5+. Composer is only used for development tools (PHPCS, PHPUnit).
 
 ```
-ai-visibility-dashboard/
-├── ai-visibility-dashboard.php   Bootstrap: constants, activation and deactivation, action link
+trailseo-ai-visibility/
+├── trailseo-ai-visibility.php   Bootstrap: constants, activation and deactivation, action link
 ├── includes/
 │   ├── class-aivd-settings.php   Stored settings, key resolution, capability, cache flush
 │   ├── class-aivd-api.php        Read-only HTTP client for the Mencoro API
@@ -149,18 +149,18 @@ Rules of the house: escape late, sanitize early, nonces and capability checks on
 
 ## Translations
 
-Source strings are in English; the text domain is `ai-visibility-dashboard`. With WP-CLI:
+Source strings are in English; the text domain is `trailseo-ai-visibility`. With WP-CLI:
 
 ```bash
-wp i18n make-pot . languages/ai-visibility-dashboard.pot --exclude=languages,docs
-# translate languages/ai-visibility-dashboard-{locale}.po, then:
+wp i18n make-pot . languages/trailseo-ai-visibility.pot --exclude=languages,docs
+# translate languages/trailseo-ai-visibility-{locale}.po, then:
 wp i18n make-mo languages
 wp i18n make-php languages
 ```
 
 Commit the `.po`, `.mo` and `.l10n.php` files. Spanish (Spain) uses the informal *tú*, like WordPress core's es_ES.
 
-The plugin does not call `load_plugin_textdomain()`: as recommended for plugins hosted on WordPress.org, WordPress loads the language packs of translate.wordpress.org just in time. The `.po` in `languages/` is the source to import there (Spanish (Spain), project *AI Visibility Dashboard for Mencoro*). On installs from GitHub, the `.mo` and `.l10n.php` files work when copied to `wp-content/languages/plugins/`.
+The plugin does not call `load_plugin_textdomain()`: as recommended for plugins hosted on WordPress.org, WordPress loads the language packs of translate.wordpress.org just in time. The `.po` in `languages/` is the source to import there (Spanish (Spain), project *TrailSEO AI Visibility for Mencoro*). On installs from GitHub, the `.mo` and `.l10n.php` files work when copied to `wp-content/languages/plugins/`.
 
 ## Tests
 
@@ -171,7 +171,7 @@ See [CONTRIBUTING.md](../../CONTRIBUTING.md): `bin/install-wp-tests.sh` prepares
 Development files (`docs/`, `tests/`, `bin/`, `.github/`, `.wordpress-org/`, the READMEs, Composer and PHPUnit files) are marked `export-ignore` in `.gitattributes`, so the zip GitHub builds for a tag, and `git archive`, contain only the plugin:
 
 ```bash
-git archive --format=zip --prefix=ai-visibility-dashboard/ -o ai-visibility-dashboard-1.0.1.zip v1.0.1
+git archive --format=zip --prefix=trailseo-ai-visibility/ -o trailseo-ai-visibility-1.0.2.zip v1.0.2
 ```
 
 Before tagging: bump `Version` in the plugin header, `AIVD_VERSION`, `Stable tag` in `readme.txt`, add a changelog entry and an upgrade notice, regenerate the translations, and run Plugin Check on the zip.

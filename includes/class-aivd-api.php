@@ -111,7 +111,7 @@ class AIVD_API {
 	 */
 	public function get( $path, array $query = array(), $timeout = null ) {
 		if ( '' === $this->key ) {
-			return new WP_Error( 'aivd_no_key', __( 'Add your Mencoro API key in the settings.', 'ai-visibility-dashboard' ), array( 'status' => 0 ) );
+			return new WP_Error( 'aivd_no_key', __( 'Add your Mencoro API key in the settings.', 'trailseo-ai-visibility' ), array( 'status' => 0 ) );
 		}
 
 		foreach ( $query as $name => $value ) {
@@ -155,7 +155,7 @@ class AIVD_API {
 		if ( $status >= 200 && $status < 300 ) {
 			$body = json_decode( wp_remote_retrieve_body( $response ), true );
 			if ( ! is_array( $body ) ) {
-				return new WP_Error( 'aivd_bad_json', __( 'Mencoro sent a response the plugin could not read. If this keeps happening, a proxy or firewall may be answering instead of Mencoro.', 'ai-visibility-dashboard' ), array( 'status' => $status ) );
+				return new WP_Error( 'aivd_bad_json', __( 'Mencoro sent a response the plugin could not read. If this keeps happening, a proxy or firewall may be answering instead of Mencoro.', 'trailseo-ai-visibility' ), array( 'status' => $status ) );
 			}
 			return $body;
 		}
@@ -172,11 +172,11 @@ class AIVD_API {
 	private static function transport_error( WP_Error $error ) {
 		$detail = $error->get_error_message();
 		if ( false !== stripos( $detail, 'timed out' ) || false !== strpos( $detail, 'cURL error 28' ) ) {
-			$message = __( 'Mencoro did not answer in time. The widget will try again later.', 'ai-visibility-dashboard' );
+			$message = __( 'Mencoro did not answer in time. The widget will try again later.', 'trailseo-ai-visibility' );
 		} else {
 			$message = sprintf(
 				/* translators: %s: technical error message from WordPress HTTP API. */
-				__( 'Could not reach Mencoro: %s', 'ai-visibility-dashboard' ),
+				__( 'Could not reach Mencoro: %s', 'trailseo-ai-visibility' ),
 				// Keep the technical reason short; it never contains the key, which travels in a header.
 				wp_html_excerpt( $detail, 200, '…' )
 			);
@@ -199,33 +199,33 @@ class AIVD_API {
 
 		switch ( true ) {
 			case 401 === $status:
-				$message = __( 'Mencoro rejected the API key. Check that it is complete and has not been revoked.', 'ai-visibility-dashboard' );
+				$message = __( 'Mencoro rejected the API key. Check that it is complete and has not been revoked.', 'trailseo-ai-visibility' );
 				break;
 			case 403 === $status:
-				$message = __( 'This API key cannot read this data. Give it the "read" capability and access to the organization.', 'ai-visibility-dashboard' );
+				$message = __( 'This API key cannot read this data. Give it the "read" capability and access to the organization.', 'trailseo-ai-visibility' );
 				break;
 			case 404 === $status:
-				$message = __( 'Mencoro could not find this project with this key. Choose the project again in the settings.', 'ai-visibility-dashboard' );
+				$message = __( 'Mencoro could not find this project with this key. Choose the project again in the settings.', 'trailseo-ai-visibility' );
 				break;
 			case 429 === $status:
 				$retry               = self::retry_after( $response );
 				$data['retry_after'] = $retry;
 				$message             = $retry > 0
 					/* translators: %d: number of seconds. */
-					? sprintf( _n( 'Too many requests to Mencoro. Try again in %d second.', 'Too many requests to Mencoro. Try again in %d seconds.', $retry, 'ai-visibility-dashboard' ), $retry )
-					: __( 'Too many requests to Mencoro. Try again in a few minutes.', 'ai-visibility-dashboard' );
+					? sprintf( _n( 'Too many requests to Mencoro. Try again in %d second.', 'Too many requests to Mencoro. Try again in %d seconds.', $retry, 'trailseo-ai-visibility' ), $retry )
+					: __( 'Too many requests to Mencoro. Try again in a few minutes.', 'trailseo-ai-visibility' );
 				break;
 			case $status >= 300 && $status < 400:
 				/* translators: %d: HTTP status code. */
-				$message = sprintf( __( 'Mencoro answered with an unexpected redirect (HTTP %d). Check that nothing between your server and Mencoro rewrites the address.', 'ai-visibility-dashboard' ), $status );
+				$message = sprintf( __( 'Mencoro answered with an unexpected redirect (HTTP %d). Check that nothing between your server and Mencoro rewrites the address.', 'trailseo-ai-visibility' ), $status );
 				break;
 			case $status >= 500:
 				/* translators: %d: HTTP status code. */
-				$message = sprintf( __( 'Mencoro answered with an error (HTTP %d). This is usually temporary: the widget will try again later.', 'ai-visibility-dashboard' ), $status );
+				$message = sprintf( __( 'Mencoro answered with an error (HTTP %d). This is usually temporary: the widget will try again later.', 'trailseo-ai-visibility' ), $status );
 				break;
 			default:
 				/* translators: %d: HTTP status code. */
-				$message = sprintf( __( 'Mencoro answered with an error (HTTP %d).', 'ai-visibility-dashboard' ), $status );
+				$message = sprintf( __( 'Mencoro answered with an error (HTTP %d).', 'trailseo-ai-visibility' ), $status );
 		}
 
 		return new WP_Error( 'aivd_http_' . $status, $message, $data );

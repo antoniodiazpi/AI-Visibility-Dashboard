@@ -10,7 +10,7 @@
 	convertDeprecationsToExceptions="true"
 	>
 	<testsuites>
-		<testsuite name="ai-visibility-dashboard">
+		<testsuite name="trailseo-ai-visibility">
 			<directory suffix=".php" prefix="test-">./tests/</directory>
 		</testsuite>
 	</testsuites>

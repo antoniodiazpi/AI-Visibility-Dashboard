@@ -24,7 +24,7 @@ From zero to the widget on your Dashboard in about five minutes.
 
 **From the release zip (recommended)**
 
-1. Download `ai-visibility-dashboard-x.y.z.zip` from the [latest release](https://github.com/antoniodiazpi/AI-Visibility-Dashboard/releases/latest).
+1. Download `trailseo-ai-visibility-x.y.z.zip` from the [latest release](https://github.com/antoniodiazpi/AI-Visibility-Dashboard/releases/latest).
 2. In WordPress, go to **Plugins → Add New Plugin → Upload Plugin**, choose the zip and click **Install Now**.
 3. Click **Activate**.
 
@@ -32,10 +32,10 @@ From zero to the widget on your Dashboard in about five minutes.
 
 ```bash
 cd wp-content/plugins
-git clone https://github.com/antoniodiazpi/AI-Visibility-Dashboard.git ai-visibility-dashboard
+git clone https://github.com/antoniodiazpi/AI-Visibility-Dashboard.git trailseo-ai-visibility
 ```
 
-Then activate it under **Plugins**. The folder name does not matter to the plugin, but `ai-visibility-dashboard` keeps things tidy.
+Then activate it under **Plugins**. The folder name does not matter to the plugin, but `trailseo-ai-visibility` keeps things tidy.
 
 ## 3. Connect your key
 

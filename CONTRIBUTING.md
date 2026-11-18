@@ -8,7 +8,7 @@ Thanks for helping. Keep pull requests small and focused, and describe how you t
 - Read-only towards Mencoro: only `GET` requests, and never more of them than the widget needs.
 - No telemetry, tracking or calls to any other service.
 - Sanitize early, escape late, a nonce and a capability check on every handler.
-- Keep option names, hooks and the text domain (`ai-visibility-dashboard`) stable.
+- Keep option names, hooks and the text domain (`trailseo-ai-visibility`) stable.
 
 ## Set up
 

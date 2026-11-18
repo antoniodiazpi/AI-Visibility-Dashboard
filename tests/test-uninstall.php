@@ -48,7 +48,7 @@ class Test_AIVD_Uninstall extends AIVD_Test_Case {
 		$this->assertNotEmpty( $this->leftovers() );
 
 		if ( ! defined( 'WP_UNINSTALL_PLUGIN' ) ) {
-			define( 'WP_UNINSTALL_PLUGIN', 'ai-visibility-dashboard/ai-visibility-dashboard.php' );
+			define( 'WP_UNINSTALL_PLUGIN', 'trailseo-ai-visibility/trailseo-ai-visibility.php' );
 		}
 		include dirname( __DIR__ ) . '/uninstall.php';
 

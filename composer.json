@@ -1,6 +1,6 @@
 {
-	"name": "trailseo/ai-visibility-dashboard",
-	"description": "Development tooling for the AI Visibility Dashboard for Mencoro WordPress plugin. The plugin itself has no runtime dependencies.",
+	"name": "trailseo/trailseo-ai-visibility",
+	"description": "Development tooling for the TrailSEO AI Visibility for Mencoro WordPress plugin. The plugin itself has no runtime dependencies.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"require": {

@@ -26,7 +26,7 @@ require_once $aivd_tests_dir . '/includes/functions.php';
 tests_add_filter(
 	'muplugins_loaded',
 	static function () use ( $aivd_root ) {
-		require $aivd_root . '/ai-visibility-dashboard.php';
+		require $aivd_root . '/trailseo-ai-visibility.php';
 	}
 );
 
