@@ -1,8 +1,8 @@
-# AI Visibility Dashboard — Documentation
+# TrailSEO AI Visibility — Documentation
 
 🇪🇸 [Leer en español](../es/README.md) · [Back to the project](../../README.md)
 
-AI Visibility Dashboard for Mencoro adds an **AI visibility** widget to the WordPress Dashboard: how ChatGPT, Claude, Perplexity and Google AI mention your brand, fed by your Mencoro project.
+TrailSEO AI Visibility for Mencoro adds an **AI visibility** widget to the WordPress Dashboard: how ChatGPT, Claude, Perplexity and Google AI mention your brand, fed by your Mencoro project.
 
 ## Guides
 

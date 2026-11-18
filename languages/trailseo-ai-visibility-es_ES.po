@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: AI Visibility Dashboard for Mencoro 1.0.1\n"
+"Project-Id-Version: TrailSEO AI Visibility for Mencoro 1.0.2\n"
 "Report-Msgid-Bugs-To: https://github.com/antoniodiazpi/ai-visibility-dashboard/issues\n"
 "Last-Translator: TrailSEO\n"
 "Language-Team: Spanish (Spain)\n"
@@ -8,42 +8,36 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "POT-Creation-Date: 2026-11-11T17:23:53+00:00\n"
-"PO-Revision-Date: 2026-11-11T18:33:53+00:00\n"
+"PO-Revision-Date: 2026-11-18T16:29:16+00:00\n"
 "Language: es_ES\n"
 "X-Generator: WP-CLI 2.12.0\n"
-"X-Domain: ai-visibility-dashboard\n"
+"X-Domain: trailseo-ai-visibility\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. Plugin Name of the plugin
-#: ai-visibility-dashboard.php:3
-msgid "AI Visibility Dashboard for Mencoro"
-msgstr "AI Visibility Dashboard for Mencoro"
+#: trailseo-ai-visibility.php:3
+msgid "TrailSEO AI Visibility for Mencoro"
+msgstr "TrailSEO AI Visibility for Mencoro"
 
 #. Plugin URI of the plugin
-#: ai-visibility-dashboard.php:4
+#: trailseo-ai-visibility.php:4
 msgid "https://github.com/antoniodiazpi/ai-visibility-dashboard"
 msgstr "https://github.com/antoniodiazpi/ai-visibility-dashboard"
 
 #. Description of the plugin
-#: ai-visibility-dashboard.php:5
+#: trailseo-ai-visibility.php:5
 msgid "See how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right in the WordPress dashboard. Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, powered by your Mencoro account."
 msgstr "Descubre cómo hablan de tu marca ChatGPT, Claude, Perplexity y Google IA, sin salir del escritorio de WordPress: cuota de voz, tasa de mención, sentimiento, competidores y las fuentes que citan las respuestas de IA, con los datos de tu cuenta de Mencoro."
 
 #. Author of the plugin
-#: ai-visibility-dashboard.php:9
+#: trailseo-ai-visibility.php:9
 msgid "TrailSEO"
 msgstr "TrailSEO"
 
 #. Author URI of the plugin
-#: ai-visibility-dashboard.php:10
+#: trailseo-ai-visibility.php:10
 msgid "https://trailseo.com"
 msgstr "https://trailseo.com"
-
-#: ai-visibility-dashboard.php:50
-#: includes/class-aivd-widget.php:140
-#: includes/class-aivd-widget.php:668
-msgid "Settings"
-msgstr "Ajustes"
 
 #: includes/class-aivd-admin.php:32
 #: includes/class-aivd-admin.php:33
@@ -418,6 +412,12 @@ msgstr "Próximo intento automático dentro de %s."
 #: includes/class-aivd-widget.php:138
 msgid "Try again"
 msgstr "Reintentar"
+
+#: includes/class-aivd-widget.php:140
+#: includes/class-aivd-widget.php:668
+#: trailseo-ai-visibility.php:50
+msgid "Settings"
+msgstr "Ajustes"
 
 #. translators: %s: age of the data, e.g. "8 hours".
 #: includes/class-aivd-widget.php:156

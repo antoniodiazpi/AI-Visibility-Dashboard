@@ -72,8 +72,8 @@ jobs:
             fi
             echo "::error::Release v$VERSION already exists"; exit 1
           fi
-          HEADER=$(sed -n 's/^ \* Version: *//p' ai-visibility-dashboard.php)
-          CONSTANT=$(sed -n "s/^define( 'AIVD_VERSION', '\(.*\)' );/\1/p" ai-visibility-dashboard.php)
+          HEADER=$(sed -n 's/^ \* Version: *//p' trailseo-ai-visibility.php)
+          CONSTANT=$(sed -n "s/^define( 'AIVD_VERSION', '\(.*\)' );/\1/p" trailseo-ai-visibility.php)
           echo "version=$VERSION header=$HEADER constant=$CONSTANT stable=$STABLE"
           if [ "$HEADER" != "$VERSION" ] || [ "$CONSTANT" != "$VERSION" ] || [ "$STABLE" != "$VERSION" ]; then
             echo "::error::Version mismatch: release $VERSION, header $HEADER, AIVD_VERSION $CONSTANT, Stable tag $STABLE"; exit 1
@@ -89,14 +89,18 @@ jobs:
         env:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
-          ZIP="ai-visibility-dashboard-$VERSION.zip"
-          git archive --format=zip --prefix=ai-visibility-dashboard/ -o "$ZIP" HEAD
+          ZIP="trailseo-ai-visibility-$VERSION.zip"
+          git archive --format=zip --prefix=trailseo-ai-visibility/ -o "$ZIP" HEAD
           unzip -Z1 "$ZIP"
           for dev in tests/ bin/ docs/ .github/ .wordpress-org/ composer.json phpunit.xml.dist; do
-            if unzip -Z1 "$ZIP" | grep -q "^ai-visibility-dashboard/$dev"; then
+            if unzip -Z1 "$ZIP" | grep -q "^trailseo-ai-visibility/$dev"; then
               echo "::error::$dev must not be in the zip"; exit 1
             fi
           done
+          # translate.wordpress.org delivers translations; only the .pot is shipped.
+          if unzip -Z1 "$ZIP" | grep -Eq '\.(po|mo|l10n\.php)$'; then
+            echo "::error::translation files must not be in the zip"; exit 1
+          fi
           sha256sum "$ZIP" > "$ZIP.sha256"
           cat "$ZIP.sha256"
 
@@ -108,9 +112,9 @@ jobs:
           {
             awk -v v="= $VERSION =" '$0 == v { on = 1; next } on && /^= / { exit } on' readme.txt
             echo
-            echo "**Install:** download \`ai-visibility-dashboard-$VERSION.zip\` below (not the \"Source code\" archives), then Plugins → Add New → Upload Plugin."
+            echo "**Install:** download \`trailseo-ai-visibility-$VERSION.zip\` below (not the \"Source code\" archives), then Plugins → Add New → Upload Plugin."
             echo
-            echo "SHA-256: \`$(cut -d' ' -f1 "ai-visibility-dashboard-$VERSION.zip.sha256")\`"
+            echo "SHA-256: \`$(cut -d' ' -f1 "trailseo-ai-visibility-$VERSION.zip.sha256")\`"
           } > notes.md
           if [ "$(grep -c '^\* ' notes.md)" -eq 0 ]; then
             echo "::error::No changelog entry for $VERSION in readme.txt"; exit 1
@@ -123,8 +127,8 @@ jobs:
           VERSION: ${{ steps.version.outputs.version }}
         run: |
           gh release create "v$VERSION" \
-            "ai-visibility-dashboard-$VERSION.zip" \
-            "ai-visibility-dashboard-$VERSION.zip.sha256" \
+            "trailseo-ai-visibility-$VERSION.zip" \
+            "trailseo-ai-visibility-$VERSION.zip.sha256" \
             --title "$VERSION" \
             --notes-file notes.md \
             --target "$(git rev-parse HEAD)"

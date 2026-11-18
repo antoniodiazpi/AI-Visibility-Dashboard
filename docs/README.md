@@ -1,6 +1,6 @@
 # Documentation · Documentación
 
-**AI Visibility Dashboard for Mencoro** — see how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right in the WordPress dashboard.
+**TrailSEO AI Visibility for Mencoro** — see how ChatGPT, Claude, Perplexity and Google AI talk about your brand, right in the WordPress dashboard.
 
 | 🇬🇧 English | 🇪🇸 Español |
 |---|---|

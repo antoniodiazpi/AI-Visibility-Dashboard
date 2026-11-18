@@ -77,7 +77,7 @@ class AIVD_Data {
 		if ( $force_refresh ) {
 			$snapshot = self::refresh( self::context( $range ), 'interactive' );
 			if ( null === $snapshot ) {
-				return new WP_Error( 'aivd_locked', __( 'An update is already running. Reload the page in a few seconds.', 'ai-visibility-dashboard' ) );
+				return new WP_Error( 'aivd_locked', __( 'An update is already running. Reload the page in a few seconds.', 'trailseo-ai-visibility' ) );
 			}
 			if ( ! empty( $snapshot['error'] ) && ( empty( $snapshot['payload'] ) || $snapshot['attempted_at'] !== $snapshot['fetched_at'] ) ) {
 				return self::error_from( $snapshot['error'] );
@@ -89,7 +89,7 @@ class AIVD_Data {
 		if ( is_array( $state['payload'] ) ) {
 			return $state['payload'];
 		}
-		return $state['error'] instanceof WP_Error ? $state['error'] : new WP_Error( 'aivd_pending', __( 'Your data is on its way. Reload the page in a few seconds.', 'ai-visibility-dashboard' ) );
+		return $state['error'] instanceof WP_Error ? $state['error'] : new WP_Error( 'aivd_pending', __( 'Your data is on its way. Reload the page in a few seconds.', 'trailseo-ai-visibility' ) );
 	}
 
 	/**
@@ -357,7 +357,7 @@ class AIVD_Data {
 		}
 
 		if ( 'error' === $status && null === $error ) {
-			$error = new WP_Error( 'aivd_pending', __( 'Your data is on its way. Reload the page in a few seconds.', 'ai-visibility-dashboard' ) );
+			$error = new WP_Error( 'aivd_pending', __( 'Your data is on its way. Reload the page in a few seconds.', 'trailseo-ai-visibility' ) );
 		}
 
 		$next_run  = wp_next_scheduled( self::CRON_HOOK, array( $context['range'] ) );
@@ -675,7 +675,7 @@ class AIVD_Data {
 	private static function essential( AIVD_API $api, $deadline, $path, array $query ) {
 		$left = (int) floor( $deadline - microtime( true ) );
 		if ( $left < 1 ) {
-			return new WP_Error( 'aivd_http', __( 'Mencoro did not answer in time. The widget will try again later.', 'ai-visibility-dashboard' ), array( 'status' => 0 ) );
+			return new WP_Error( 'aivd_http', __( 'Mencoro did not answer in time. The widget will try again later.', 'trailseo-ai-visibility' ), array( 'status' => 0 ) );
 		}
 		return $api->get( $path, $query, min( AIVD_API::timeout(), $left ) );
 	}
@@ -692,7 +692,7 @@ class AIVD_Data {
 	private static function secondary( AIVD_API $api, $deadline, $path, array $query ) {
 		$left = (int) floor( $deadline - microtime( true ) );
 		if ( $left < 2 ) {
-			return new WP_Error( 'aivd_skipped', __( 'Not loaded this time because Mencoro was slow. It will be retried on the next update.', 'ai-visibility-dashboard' ) );
+			return new WP_Error( 'aivd_skipped', __( 'Not loaded this time because Mencoro was slow. It will be retried on the next update.', 'trailseo-ai-visibility' ) );
 		}
 		return $api->get( $path, $query, min( AIVD_API::timeout(), $left ) );
 	}
@@ -764,7 +764,7 @@ class AIVD_Data {
 			}
 			$id     = (string) $row['competitorId'];
 			$rows[] = array(
-				'name'     => isset( $names[ $id ] ) && '' !== $names[ $id ] ? $names[ $id ] : __( 'Competitor', 'ai-visibility-dashboard' ),
+				'name'     => isset( $names[ $id ] ) && '' !== $names[ $id ] ? $names[ $id ] : __( 'Competitor', 'trailseo-ai-visibility' ),
 				'sov'      => (float) $row['shareOfVoice'],
 				'is_brand' => false,
 			);

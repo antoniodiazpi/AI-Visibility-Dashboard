@@ -31,7 +31,7 @@ class AIVD_Widget {
 		if ( ! current_user_can( AIVD_Settings::widget_capability() ) ) {
 			return;
 		}
-		wp_add_dashboard_widget( self::ID, __( 'AI visibility', 'ai-visibility-dashboard' ), array( __CLASS__, 'render' ) );
+		wp_add_dashboard_widget( self::ID, __( 'AI visibility', 'trailseo-ai-visibility' ), array( __CLASS__, 'render' ) );
 	}
 
 	/**
@@ -77,8 +77,8 @@ class AIVD_Widget {
 
 		if ( ! empty( $data['no_ai_engine'] ) ) {
 			$message = ! empty( $data['no_selected'] )
-				? __( 'This project does not track any of the AI engines chosen in the settings. Tick other engines in Settings → AI Visibility.', 'ai-visibility-dashboard' )
-				: __( 'This Mencoro project does not track any AI engine yet (ChatGPT, Claude, Perplexity or Google AI). Add them to its tracked queries to see data here.', 'ai-visibility-dashboard' );
+				? __( 'This project does not track any of the AI engines chosen in the settings. Tick other engines in Settings → AI Visibility.', 'trailseo-ai-visibility' )
+				: __( 'This Mencoro project does not track any AI engine yet (ChatGPT, Claude, Perplexity or Google AI). Add them to its tracked queries to see data here.', 'trailseo-ai-visibility' );
 			echo '<div class="aivd-state"><p>' . esc_html( $message ) . '</p></div>';
 			self::render_footer( $data, $range );
 			echo '</div>';
@@ -86,14 +86,14 @@ class AIVD_Widget {
 		}
 
 		if ( null === $data['kpis']['share_of_voice']['value'] && null === $data['kpis']['mention_rate']['value'] ) {
-			echo '<div class="aivd-state"><p>' . esc_html__( 'No AI answers were checked in this period yet, so there is nothing to measure. Mencoro checks most queries once a day: come back tomorrow or choose a longer period.', 'ai-visibility-dashboard' ) . '</p></div>';
+			echo '<div class="aivd-state"><p>' . esc_html__( 'No AI answers were checked in this period yet, so there is nothing to measure. Mencoro checks most queries once a day: come back tomorrow or choose a longer period.', 'trailseo-ai-visibility' ) . '</p></div>';
 			self::render_footer( $data, $range );
 			echo '</div>';
 			return;
 		}
 
 		if ( '' !== $data['dirty_since'] ) {
-			echo '<p class="aivd-note">' . esc_html__( 'Mencoro is recalculating part of this period: figures may still change slightly.', 'ai-visibility-dashboard' ) . '</p>';
+			echo '<p class="aivd-note">' . esc_html__( 'Mencoro is recalculating part of this period: figures may still change slightly.', 'trailseo-ai-visibility' ) . '</p>';
 		}
 
 		self::render_kpis( $data );
@@ -117,8 +117,8 @@ class AIVD_Widget {
 	 */
 	private static function render_no_data( array $state, $range ) {
 		if ( 'pending' === $state['status'] ) {
-			echo '<div class="aivd-state" role="status"><p>' . esc_html__( 'Your data is on its way from Mencoro.', 'ai-visibility-dashboard' ) . '</p><p>';
-			echo '<a href="' . esc_url( add_query_arg( 'aivd_range', $range, admin_url( 'index.php' ) ) . '#' . self::ID ) . '">' . esc_html__( 'Reload in a few seconds', 'ai-visibility-dashboard' ) . '</a>';
+			echo '<div class="aivd-state" role="status"><p>' . esc_html__( 'Your data is on its way from Mencoro.', 'trailseo-ai-visibility' ) . '</p><p>';
+			echo '<a href="' . esc_url( add_query_arg( 'aivd_range', $range, admin_url( 'index.php' ) ) . '#' . self::ID ) . '">' . esc_html__( 'Reload in a few seconds', 'trailseo-ai-visibility' ) . '</a>';
 			echo '</p></div>';
 			return;
 		}
@@ -129,15 +129,15 @@ class AIVD_Widget {
 			echo '<p class="aivd-muted">' . esc_html(
 				sprintf(
 					/* translators: %s: time until the next attempt, e.g. "5 mins". */
-					__( 'Next automatic attempt in %s.', 'ai-visibility-dashboard' ),
+					__( 'Next automatic attempt in %s.', 'trailseo-ai-visibility' ),
 					human_time_diff( time(), $state['retry_at'] )
 				)
 			) . '</p>';
 		}
 		echo '<p>';
-		self::render_refresh_link( $range, __( 'Try again', 'ai-visibility-dashboard' ) );
+		self::render_refresh_link( $range, __( 'Try again', 'trailseo-ai-visibility' ) );
 		if ( current_user_can( 'manage_options' ) ) {
-			echo ' · <a href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Settings', 'ai-visibility-dashboard' ) . '</a>';
+			echo ' · <a href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Settings', 'trailseo-ai-visibility' ) . '</a>';
 		}
 		echo '</p></div>';
 	}
@@ -153,7 +153,7 @@ class AIVD_Widget {
 			$parts = array(
 				sprintf(
 					/* translators: %s: age of the data, e.g. "8 hours". */
-					__( 'Last data available, from %s ago.', 'ai-visibility-dashboard' ),
+					__( 'Last data available, from %s ago.', 'trailseo-ai-visibility' ),
 					human_time_diff( $state['fetched_at'], time() )
 				),
 			);
@@ -161,22 +161,22 @@ class AIVD_Widget {
 				$parts[] = $state['error']->get_error_message();
 				$parts[] = sprintf(
 					/* translators: %s: time until the next attempt, e.g. "5 mins". */
-					__( 'Next automatic attempt in %s.', 'ai-visibility-dashboard' ),
+					__( 'Next automatic attempt in %s.', 'trailseo-ai-visibility' ),
 					human_time_diff( time(), $state['retry_at'] )
 				);
 			} elseif ( $state['cron_late'] ) {
-				$parts[] = __( 'Automatic updates do not seem to run on this site (WP-Cron). Use Refresh to update now.', 'ai-visibility-dashboard' );
+				$parts[] = __( 'Automatic updates do not seem to run on this site (WP-Cron). Use Refresh to update now.', 'trailseo-ai-visibility' );
 			} elseif ( $state['refreshing'] ) {
-				$parts[] = __( 'An update is running in the background: reload the Dashboard in a minute to see it.', 'ai-visibility-dashboard' );
+				$parts[] = __( 'An update is running in the background: reload the Dashboard in a minute to see it.', 'trailseo-ai-visibility' );
 			}
 			echo '<div class="aivd-status aivd-status--stale" role="status"><p>' . esc_html( implode( ' ', $parts ) ) . ' ';
-			self::render_refresh_link( $range, __( 'Refresh now', 'ai-visibility-dashboard' ) );
+			self::render_refresh_link( $range, __( 'Refresh now', 'trailseo-ai-visibility' ) );
 			echo '</p></div>';
 			return;
 		}
 
 		if ( $state['partial'] ) {
-			echo '<div class="aivd-status" role="status"><p>' . esc_html__( 'Some sections could not be loaded this time. They will be retried on the next update.', 'ai-visibility-dashboard' ) . '</p></div>';
+			echo '<div class="aivd-status" role="status"><p>' . esc_html__( 'Some sections could not be loaded this time. They will be retried on the next update.', 'trailseo-ai-visibility' ) . '</p></div>';
 		}
 	}
 
@@ -209,7 +209,7 @@ class AIVD_Widget {
 				'Based on %1$s tracked query on %2$s, %3$s – %4$s (UTC). The figures describe how these engines answer your tracked queries, not every search.',
 				'Based on %1$s tracked queries on %2$s, %3$s – %4$s (UTC). The figures describe how these engines answer your tracked queries, not every search.',
 				(int) $data['counts']['queries'],
-				'ai-visibility-dashboard'
+				'trailseo-ai-visibility'
 			),
 			number_format_i18n( (int) $data['counts']['queries'] ),
 			implode( ', ', $names ),
@@ -224,12 +224,12 @@ class AIVD_Widget {
 	 */
 	private static function render_setup() {
 		echo '<div class="aivd-state aivd-state--setup">';
-		echo '<p class="aivd-setup-title">' . esc_html__( 'How do ChatGPT, Claude, Perplexity and Google AI talk about your brand?', 'ai-visibility-dashboard' ) . '</p>';
-		echo '<p>' . esc_html__( 'Connect your Mencoro project to see your Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, right here.', 'ai-visibility-dashboard' ) . '</p>';
+		echo '<p class="aivd-setup-title">' . esc_html__( 'How do ChatGPT, Claude, Perplexity and Google AI talk about your brand?', 'trailseo-ai-visibility' ) . '</p>';
+		echo '<p>' . esc_html__( 'Connect your Mencoro project to see your Share of Voice, mention rate, sentiment, competitors and the sources AI answers cite, right here.', 'trailseo-ai-visibility' ) . '</p>';
 		if ( current_user_can( 'manage_options' ) ) {
-			echo '<p><a class="button button-primary" href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Connect Mencoro', 'ai-visibility-dashboard' ) . '</a></p>';
+			echo '<p><a class="button button-primary" href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Connect Mencoro', 'trailseo-ai-visibility' ) . '</a></p>';
 		} else {
-			echo '<p>' . esc_html__( 'Ask an administrator to connect it in Settings → AI Visibility.', 'ai-visibility-dashboard' ) . '</p>';
+			echo '<p>' . esc_html__( 'Ask an administrator to connect it in Settings → AI Visibility.', 'trailseo-ai-visibility' ) . '</p>';
 		}
 		echo '</div>';
 	}
@@ -256,13 +256,13 @@ class AIVD_Widget {
 		}
 		echo '</div>';
 
-		echo '<nav class="aivd-range" aria-label="' . esc_attr__( 'Period', 'ai-visibility-dashboard' ) . '">';
+		echo '<nav class="aivd-range" aria-label="' . esc_attr__( 'Period', 'trailseo-ai-visibility' ) . '">';
 		foreach ( AIVD_Settings::RANGES as $days ) {
 			$url = add_query_arg( 'aivd_range', $days, admin_url( 'index.php' ) ) . '#' . self::ID;
 			/* translators: %d: number of days, shown on a compact period switch, e.g. "28 d". */
-			$label = sprintf( __( '%d d', 'ai-visibility-dashboard' ), $days );
+			$label = sprintf( __( '%d d', 'trailseo-ai-visibility' ), $days );
 			/* translators: %d: number of days. */
-			$title = sprintf( _n( 'Last %d day', 'Last %d days', $days, 'ai-visibility-dashboard' ), $days );
+			$title = sprintf( _n( 'Last %d day', 'Last %d days', $days, 'trailseo-ai-visibility' ), $days );
 			if ( $days === $range ) {
 				echo '<span class="aivd-range__item is-current" aria-current="true" title="' . esc_attr( $title ) . '">' . esc_html( $label ) . '</span>';
 			} else {
@@ -283,37 +283,37 @@ class AIVD_Widget {
 
 		$tiles = array(
 			array(
-				'label' => __( 'Share of Voice', 'ai-visibility-dashboard' ),
+				'label' => __( 'Share of Voice', 'trailseo-ai-visibility' ),
 				'value' => self::fmt( $k['share_of_voice']['value'], 1, '%' ),
 				'trend' => $k['share_of_voice']['trend'],
 				'unit'  => 'pp',
 				'dec'   => 1,
-				'hint'  => __( 'Your share of the brand mentions in AI answers, against the competitors you track.', 'ai-visibility-dashboard' ),
+				'hint'  => __( 'Your share of the brand mentions in AI answers, against the competitors you track.', 'trailseo-ai-visibility' ),
 			),
 			array(
-				'label' => __( 'Mention rate', 'ai-visibility-dashboard' ),
+				'label' => __( 'Mention rate', 'trailseo-ai-visibility' ),
 				'value' => self::fmt( $k['mention_rate']['value'], 0, '%' ),
 				'trend' => $k['mention_rate']['trend'],
 				'unit'  => 'pp',
 				'dec'   => 0,
 				/* translators: 1: queries with a mention, 2: tracked queries. */
-				'hint'  => sprintf( __( 'Share of AI checks where your brand appears. %1$d of %2$d tracked queries mention you.', 'ai-visibility-dashboard' ), $data['counts']['with_mention'], $data['counts']['queries'] ),
+				'hint'  => sprintf( __( 'Share of AI checks where your brand appears. %1$d of %2$d tracked queries mention you.', 'trailseo-ai-visibility' ), $data['counts']['with_mention'], $data['counts']['queries'] ),
 			),
 			array(
-				'label' => __( 'Average position', 'ai-visibility-dashboard' ),
+				'label' => __( 'Average position', 'trailseo-ai-visibility' ),
 				'value' => null === $k['position']['value'] ? '—' : '#' . number_format_i18n( $k['position']['value'], 1 ),
 				'trend' => $k['position']['trend'],
 				'unit'  => '',
 				'dec'   => 1,
-				'hint'  => __( 'Where your brand appears inside the answer, on average. Lower is better.', 'ai-visibility-dashboard' ),
+				'hint'  => __( 'Where your brand appears inside the answer, on average. Lower is better.', 'trailseo-ai-visibility' ),
 			),
 			array(
-				'label' => __( 'Positivity', 'ai-visibility-dashboard' ),
+				'label' => __( 'Positivity', 'trailseo-ai-visibility' ),
 				'value' => null === $k['positivity']['value'] ? '—' : number_format_i18n( $k['positivity']['value'], 0 ) . '<small>/100</small>',
 				'trend' => $k['positivity']['trend'],
 				'unit'  => '',
 				'dec'   => 0,
-				'hint'  => __( 'Tone of the mentions, from 0 (negative) to 100 (positive).', 'ai-visibility-dashboard' ),
+				'hint'  => __( 'Tone of the mentions, from 0 (negative) to 100 (positive).', 'trailseo-ai-visibility' ),
 			),
 		);
 
@@ -337,25 +337,25 @@ class AIVD_Widget {
 	 */
 	private static function render_delta( $trend, $unit, $dec ) {
 		if ( null === $trend ) {
-			echo '<span class="aivd-delta aivd-delta--none">' . esc_html__( 'no previous period', 'ai-visibility-dashboard' ) . '</span>';
+			echo '<span class="aivd-delta aivd-delta--none">' . esc_html__( 'no previous period', 'trailseo-ai-visibility' ) . '</span>';
 			return;
 		}
 
 		$abs    = abs( (float) $trend );
-		$amount = number_format_i18n( $abs, $dec ) . ( 'pp' === $unit ? ' ' . __( 'pp', 'ai-visibility-dashboard' ) : '' );
+		$amount = number_format_i18n( $abs, $dec ) . ( 'pp' === $unit ? ' ' . __( 'pp', 'trailseo-ai-visibility' ) : '' );
 
 		if ( round( $abs, $dec ) == 0 ) { // phpcs:ignore Universal.Operators.StrictComparisons.LooseEqual -- Comparing a rounded float with zero.
-			echo '<span class="aivd-delta aivd-delta--flat"><span aria-hidden="true">= </span>' . esc_html__( 'no change', 'ai-visibility-dashboard' ) . '</span>';
+			echo '<span class="aivd-delta aivd-delta--flat"><span aria-hidden="true">= </span>' . esc_html__( 'no change', 'trailseo-ai-visibility' ) . '</span>';
 			return;
 		}
 
 		if ( $trend > 0 ) {
 			/* translators: %s: amount, e.g. "2.1 pp". */
-			$sr = sprintf( __( 'Improved by %s against the previous period', 'ai-visibility-dashboard' ), $amount );
+			$sr = sprintf( __( 'Improved by %s against the previous period', 'trailseo-ai-visibility' ), $amount );
 			echo '<span class="aivd-delta aivd-delta--up" title="' . esc_attr( $sr ) . '"><span aria-hidden="true">▲ </span>' . esc_html( $amount ) . '<span class="screen-reader-text"> ' . esc_html( $sr ) . '</span></span>';
 		} else {
 			/* translators: %s: amount, e.g. "2.1 pp". */
-			$sr = sprintf( __( 'Worse by %s against the previous period', 'ai-visibility-dashboard' ), $amount );
+			$sr = sprintf( __( 'Worse by %s against the previous period', 'trailseo-ai-visibility' ), $amount );
 			echo '<span class="aivd-delta aivd-delta--down" title="' . esc_attr( $sr ) . '"><span aria-hidden="true">▼ </span>' . esc_html( $amount ) . '<span class="screen-reader-text"> ' . esc_html( $sr ) . '</span></span>';
 		}
 	}
@@ -367,7 +367,7 @@ class AIVD_Widget {
 	 */
 	private static function render_series( array $data ) {
 		echo '<section class="aivd-section">';
-		echo '<h3 class="aivd-h">' . esc_html__( 'Share of Voice over time', 'ai-visibility-dashboard' ) . '</h3>';
+		echo '<h3 class="aivd-h">' . esc_html__( 'Share of Voice over time', 'trailseo-ai-visibility' ) . '</h3>';
 
 		if ( is_string( $data['series'] ) ) {
 			echo '<p class="aivd-muted">' . esc_html( $data['series'] ) . '</p></section>';
@@ -382,7 +382,7 @@ class AIVD_Widget {
 		}
 
 		if ( count( $points ) < 2 ) {
-			echo '<p class="aivd-muted">' . esc_html__( 'Not enough days with data to draw a trend yet.', 'ai-visibility-dashboard' ) . '</p></section>';
+			echo '<p class="aivd-muted">' . esc_html__( 'Not enough days with data to draw a trend yet.', 'trailseo-ai-visibility' ) . '</p></section>';
 			return;
 		}
 
@@ -424,7 +424,7 @@ class AIVD_Widget {
 
 		$summary = sprintf(
 			/* translators: 1: first value, 2: last value, 3: highest value. */
-			__( 'Share of Voice went from %1$s to %2$s in this period, with a high of %3$s.', 'ai-visibility-dashboard' ),
+			__( 'Share of Voice went from %1$s to %2$s in this period, with a high of %3$s.', 'trailseo-ai-visibility' ),
 			self::fmt( $first['value'], 1, '%' ),
 			self::fmt( $last['value'], 1, '%' ),
 			self::fmt( $max, 1, '%' )
@@ -468,7 +468,7 @@ class AIVD_Widget {
 		$max = max( 1, max( wp_list_pluck( $data['competitors'], 'sov' ) ) );
 
 		echo '<section class="aivd-section">';
-		echo '<h3 class="aivd-h">' . esc_html__( 'You and your competitors', 'ai-visibility-dashboard' ) . '</h3>';
+		echo '<h3 class="aivd-h">' . esc_html__( 'You and your competitors', 'trailseo-ai-visibility' ) . '</h3>';
 		echo '<ul class="aivd-bars">';
 		foreach ( $data['competitors'] as $row ) {
 			$value = self::fmt( $row['sov'], 1, '%' );
@@ -476,7 +476,7 @@ class AIVD_Widget {
 			echo '<li class="aivd-bar' . ( $row['is_brand'] ? ' is-brand' : '' ) . '" title="' . esc_attr( $row['name'] . ': ' . $value ) . '">';
 			echo '<span class="aivd-bar__name">' . esc_html( $row['name'] );
 			if ( $row['is_brand'] ) {
-				echo ' <span class="aivd-tag">' . esc_html__( 'you', 'ai-visibility-dashboard' ) . '</span>';
+				echo ' <span class="aivd-tag">' . esc_html__( 'you', 'trailseo-ai-visibility' ) . '</span>';
 			}
 			echo '</span>';
 			echo '<span class="aivd-bar__track"><span class="aivd-bar__fill" style="width:' . esc_attr( $width ) . '%"></span></span>';
@@ -499,13 +499,13 @@ class AIVD_Widget {
 		}
 
 		$parts = array(
-			'positive' => array( $c['positive'], __( 'Positive', 'ai-visibility-dashboard' ) ),
-			'neutral'  => array( $c['neutral'], __( 'Neutral', 'ai-visibility-dashboard' ) ),
-			'negative' => array( $c['negative'], __( 'Negative', 'ai-visibility-dashboard' ) ),
+			'positive' => array( $c['positive'], __( 'Positive', 'trailseo-ai-visibility' ) ),
+			'neutral'  => array( $c['neutral'], __( 'Neutral', 'trailseo-ai-visibility' ) ),
+			'negative' => array( $c['negative'], __( 'Negative', 'trailseo-ai-visibility' ) ),
 		);
 
 		echo '<section class="aivd-section">';
-		echo '<h3 class="aivd-h">' . esc_html__( 'Tone of the mentions', 'ai-visibility-dashboard' ) . '</h3>';
+		echo '<h3 class="aivd-h">' . esc_html__( 'Tone of the mentions', 'trailseo-ai-visibility' ) . '</h3>';
 		echo '<div class="aivd-stack" aria-hidden="true">';
 		foreach ( $parts as $key => $part ) {
 			if ( $part[0] > 0 ) {
@@ -528,14 +528,14 @@ class AIVD_Widget {
 	 */
 	private static function render_sources( array $data ) {
 		echo '<section class="aivd-section">';
-		echo '<h3 class="aivd-h">' . esc_html__( 'Sources the AI answers cite', 'ai-visibility-dashboard' ) . '</h3>';
+		echo '<h3 class="aivd-h">' . esc_html__( 'Sources the AI answers cite', 'trailseo-ai-visibility' ) . '</h3>';
 
 		if ( is_string( $data['sources'] ) ) {
 			echo '<p class="aivd-muted">' . esc_html( $data['sources'] ) . '</p></section>';
 			return;
 		}
 		if ( empty( $data['sources'] ) ) {
-			echo '<p class="aivd-muted">' . esc_html__( 'No cited sources in this period.', 'ai-visibility-dashboard' ) . '</p></section>';
+			echo '<p class="aivd-muted">' . esc_html__( 'No cited sources in this period.', 'trailseo-ai-visibility' ) . '</p></section>';
 			return;
 		}
 
@@ -545,7 +545,7 @@ class AIVD_Widget {
 			echo '<p class="aivd-caption">' . esc_html(
 				sprintf(
 					/* translators: 1: sources listed, 2: all sources cited in the period. */
-					__( 'The %1$s most cited of %2$s sources in this period.', 'ai-visibility-dashboard' ),
+					__( 'The %1$s most cited of %2$s sources in this period.', 'trailseo-ai-visibility' ),
 					number_format_i18n( $shown ),
 					number_format_i18n( $total )
 				)
@@ -559,11 +559,11 @@ class AIVD_Widget {
 			echo '<li class="aivd-list__row' . ( $row['is_own'] ? ' is-own' : '' ) . '">';
 			echo '<span class="aivd-list__main">' . esc_html( $row['domain'] );
 			if ( $row['is_own'] ) {
-				echo ' <span class="aivd-tag">' . esc_html__( 'your site', 'ai-visibility-dashboard' ) . '</span>';
+				echo ' <span class="aivd-tag">' . esc_html__( 'your site', 'trailseo-ai-visibility' ) . '</span>';
 			}
 			echo '</span>';
 			/* translators: %s: number of citations. */
-			echo '<span class="aivd-list__value">' . esc_html( sprintf( _n( '%s citation', '%s citations', $row['citations'], 'ai-visibility-dashboard' ), number_format_i18n( $row['citations'] ) ) ) . '</span>';
+			echo '<span class="aivd-list__value">' . esc_html( sprintf( _n( '%s citation', '%s citations', $row['citations'], 'trailseo-ai-visibility' ), number_format_i18n( $row['citations'] ) ) ) . '</span>';
 			echo '</li>';
 		}
 		echo '</ol>';
@@ -571,7 +571,7 @@ class AIVD_Widget {
 			echo '<p class="aivd-note">' . esc_html(
 				sprintf(
 					/* translators: %s: number of sources listed. */
-					__( 'Your site is not in this list, which only shows the top %s. That does not mean it is never cited. Look at the pages cited and whether they cover topics where your content adds value.', 'ai-visibility-dashboard' ),
+					__( 'Your site is not in this list, which only shows the top %s. That does not mean it is never cited. Look at the pages cited and whether they cover topics where your content adds value.', 'trailseo-ai-visibility' ),
 					number_format_i18n( $shown )
 				)
 			) . '</p>';
@@ -592,11 +592,11 @@ class AIVD_Widget {
 		}
 
 		echo '<section class="aivd-section">';
-		echo '<h3 class="aivd-h">' . esc_html__( 'Queries that moved most', 'ai-visibility-dashboard' ) . '</h3>';
-		echo '<p class="aivd-caption">' . esc_html__( 'Share of Voice against the previous period. Small changes can be noise: AI answers vary from day to day.', 'ai-visibility-dashboard' ) . '</p>';
+		echo '<h3 class="aivd-h">' . esc_html__( 'Queries that moved most', 'trailseo-ai-visibility' ) . '</h3>';
+		echo '<p class="aivd-caption">' . esc_html__( 'Share of Voice against the previous period. Small changes can be noise: AI answers vary from day to day.', 'trailseo-ai-visibility' ) . '</p>';
 		echo '<div class="aivd-movers">';
-		self::render_mover_list( __( 'Gaining', 'ai-visibility-dashboard' ), $up );
-		self::render_mover_list( __( 'Losing', 'ai-visibility-dashboard' ), $down );
+		self::render_mover_list( __( 'Gaining', 'trailseo-ai-visibility' ), $up );
+		self::render_mover_list( __( 'Losing', 'trailseo-ai-visibility' ), $down );
 		echo '</div></section>';
 	}
 
@@ -614,7 +614,7 @@ class AIVD_Widget {
 			return;
 		}
 		if ( empty( $rows ) ) {
-			echo '<p class="aivd-muted">' . esc_html__( 'None in this period.', 'ai-visibility-dashboard' ) . '</p></div>';
+			echo '<p class="aivd-muted">' . esc_html__( 'None in this period.', 'trailseo-ai-visibility' ) . '</p></div>';
 			return;
 		}
 		echo '<ul class="aivd-list">';
@@ -633,14 +633,14 @@ class AIVD_Widget {
 	 * Short definitions, collapsed by default.
 	 */
 	private static function render_glossary() {
-		echo '<details class="aivd-glossary"><summary>' . esc_html__( 'What do these figures mean?', 'ai-visibility-dashboard' ) . '</summary><dl>';
+		echo '<details class="aivd-glossary"><summary>' . esc_html__( 'What do these figures mean?', 'trailseo-ai-visibility' ) . '</summary><dl>';
 		$items = array(
-			__( 'Share of Voice', 'ai-visibility-dashboard' ) => __( 'Your share of the brand mentions in AI answers, against the competitors you track in Mencoro. Higher is better.', 'ai-visibility-dashboard' ),
-			__( 'Mention rate', 'ai-visibility-dashboard' ) => __( 'Out of every AI answer checked, how many mention your brand. Higher is better. Mencoro calls it Coverage.', 'ai-visibility-dashboard' ),
-			__( 'Average position', 'ai-visibility-dashboard' ) => __( 'Where your brand appears inside the answer when it is mentioned. 1 means first. Lower is better.', 'ai-visibility-dashboard' ),
-			__( 'Positivity', 'ai-visibility-dashboard' ) => __( 'Tone of the mentions, from 0 (all negative) to 100 (all positive); 50 means they balance out. Mencoro calls it Favorability.', 'ai-visibility-dashboard' ),
-			__( 'pp', 'ai-visibility-dashboard' )         => __( 'Percentage points: the change of a percentage against the previous period of the same length.', 'ai-visibility-dashboard' ),
-			__( 'Sample', 'ai-visibility-dashboard' )     => __( 'Every figure comes from the queries, countries and engines you track in Mencoro. A mention is not a click, a visit or a sale, and a change is a signal to look into, not proof of its cause.', 'ai-visibility-dashboard' ),
+			__( 'Share of Voice', 'trailseo-ai-visibility' ) => __( 'Your share of the brand mentions in AI answers, against the competitors you track in Mencoro. Higher is better.', 'trailseo-ai-visibility' ),
+			__( 'Mention rate', 'trailseo-ai-visibility' ) => __( 'Out of every AI answer checked, how many mention your brand. Higher is better. Mencoro calls it Coverage.', 'trailseo-ai-visibility' ),
+			__( 'Average position', 'trailseo-ai-visibility' ) => __( 'Where your brand appears inside the answer when it is mentioned. 1 means first. Lower is better.', 'trailseo-ai-visibility' ),
+			__( 'Positivity', 'trailseo-ai-visibility' )   => __( 'Tone of the mentions, from 0 (all negative) to 100 (all positive); 50 means they balance out. Mencoro calls it Favorability.', 'trailseo-ai-visibility' ),
+			__( 'pp', 'trailseo-ai-visibility' )           => __( 'Percentage points: the change of a percentage against the previous period of the same length.', 'trailseo-ai-visibility' ),
+			__( 'Sample', 'trailseo-ai-visibility' )       => __( 'Every figure comes from the queries, countries and engines you track in Mencoro. A mention is not a click, a visit or a sale, and a change is a signal to look into, not proof of its cause.', 'trailseo-ai-visibility' ),
 		);
 		foreach ( $items as $term => $definition ) {
 			echo '<dt>' . esc_html( $term ) . '</dt><dd>' . esc_html( $definition ) . '</dd>';
@@ -658,14 +658,14 @@ class AIVD_Widget {
 		echo '<div class="aivd-foot"><span>';
 		printf(
 			/* translators: 1: link to Mencoro, 2: time since the last update, e.g. "2 hours". */
-			esc_html__( 'Data from %1$s · updated %2$s ago', 'ai-visibility-dashboard' ),
+			esc_html__( 'Data from %1$s · updated %2$s ago', 'trailseo-ai-visibility' ),
 			'<a href="https://mencoro.com/" target="_blank" rel="noopener noreferrer">Mencoro</a>',
 			esc_html( human_time_diff( (int) $data['fetched_at'], time() ) )
 		);
 		echo '</span><span>';
-		self::render_refresh_link( $range, __( 'Refresh', 'ai-visibility-dashboard' ) );
+		self::render_refresh_link( $range, __( 'Refresh', 'trailseo-ai-visibility' ) );
 		if ( current_user_can( 'manage_options' ) ) {
-			echo ' · <a href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Settings', 'ai-visibility-dashboard' ) . '</a>';
+			echo ' · <a href="' . esc_url( AIVD_Settings::page_url() ) . '">' . esc_html__( 'Settings', 'trailseo-ai-visibility' ) . '</a>';
 		}
 		echo '</span></div>';
 	}

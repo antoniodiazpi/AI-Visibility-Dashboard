@@ -29,8 +29,8 @@ class AIVD_Admin {
 	 */
 	public static function menu() {
 		add_options_page(
-			__( 'AI Visibility', 'ai-visibility-dashboard' ),
-			__( 'AI Visibility', 'ai-visibility-dashboard' ),
+			__( 'AI Visibility', 'trailseo-ai-visibility' ),
+			__( 'AI Visibility', 'trailseo-ai-visibility' ),
 			'manage_options',
 			self::PAGE,
 			array( __CLASS__, 'render' )
@@ -59,8 +59,8 @@ class AIVD_Admin {
 			'chatgpt'            => 'ChatGPT',
 			'claude'             => 'Claude',
 			'perplexity'         => 'Perplexity',
-			'google_ai_overview' => __( 'Google AI Overviews', 'ai-visibility-dashboard' ),
-			'google_ai_mode'     => __( 'Google AI Mode', 'ai-visibility-dashboard' ),
+			'google_ai_overview' => __( 'Google AI Overviews', 'trailseo-ai-visibility' ),
+			'google_ai_mode'     => __( 'Google AI Mode', 'trailseo-ai-visibility' ),
 		);
 	}
 
@@ -69,7 +69,7 @@ class AIVD_Admin {
 	 */
 	public static function handle_save() {
 		if ( ! current_user_can( 'manage_options' ) ) {
-			wp_die( esc_html__( 'You are not allowed to change these settings.', 'ai-visibility-dashboard' ), 403 );
+			wp_die( esc_html__( 'You are not allowed to change these settings.', 'trailseo-ai-visibility' ), 403 );
 		}
 		check_admin_referer( 'aivd_save' );
 
@@ -122,17 +122,17 @@ class AIVD_Admin {
 		AIVD_Settings::flush_cache();
 
 		if ( $invalid_key ) {
-			self::notice( 'error', __( 'That does not look like a Mencoro API key, so it was not saved. Copy it again from Mencoro: it starts with mencoro_sk_ and has no spaces.', 'ai-visibility-dashboard' ) );
+			self::notice( 'error', __( 'That does not look like a Mencoro API key, so it was not saved. Copy it again from Mencoro: it starts with mencoro_sk_ and has no spaces.', 'trailseo-ai-visibility' ) );
 		} elseif ( '' === AIVD_Settings::api_key() ) {
-			self::notice( 'success', __( 'Settings saved.', 'ai-visibility-dashboard' ) );
+			self::notice( 'success', __( 'Settings saved.', 'trailseo-ai-visibility' ) );
 		} else {
 			$me = ( new AIVD_API() )->me();
 			if ( is_wp_error( $me ) ) {
 				self::notice( 'error', $me->get_error_message() );
 			} elseif ( ! AIVD_Settings::is_configured() ) {
-				self::notice( 'success', __( 'Key saved and working. Now choose the project to show.', 'ai-visibility-dashboard' ) );
+				self::notice( 'success', __( 'Key saved and working. Now choose the project to show.', 'trailseo-ai-visibility' ) );
 			} else {
-				self::notice( 'success', __( 'Settings saved. The widget is ready on your Dashboard.', 'ai-visibility-dashboard' ) );
+				self::notice( 'success', __( 'Settings saved. The widget is ready on your Dashboard.', 'trailseo-ai-visibility' ) );
 			}
 		}
 
@@ -148,7 +148,7 @@ class AIVD_Admin {
 	 */
 	public static function handle_refresh() {
 		if ( ! current_user_can( AIVD_Settings::widget_capability() ) ) {
-			wp_die( esc_html__( 'You are not allowed to do this.', 'ai-visibility-dashboard' ), 403 );
+			wp_die( esc_html__( 'You are not allowed to do this.', 'trailseo-ai-visibility' ), 403 );
 		}
 		check_admin_referer( 'aivd_refresh' );
 
@@ -157,9 +157,9 @@ class AIVD_Admin {
 		if ( AIVD_Settings::is_configured() ) {
 			$result   = AIVD_Data::refresh_now( $range );
 			$messages = array(
-				'running'      => __( 'An update was already running. The figures below are the latest available.', 'ai-visibility-dashboard' ),
-				'too_soon'     => __( 'The data was updated less than a minute ago. Try again in a moment.', 'ai-visibility-dashboard' ),
-				'rate_limited' => __( 'Mencoro asked to wait before the next update. The widget will update on its own as soon as it can.', 'ai-visibility-dashboard' ),
+				'running'      => __( 'An update was already running. The figures below are the latest available.', 'trailseo-ai-visibility' ),
+				'too_soon'     => __( 'The data was updated less than a minute ago. Try again in a moment.', 'trailseo-ai-visibility' ),
+				'rate_limited' => __( 'Mencoro asked to wait before the next update. The widget will update on its own as soon as it can.', 'trailseo-ai-visibility' ),
 			);
 			if ( isset( $messages[ $result ] ) ) {
 				set_transient( 'aivd_widget_notice_' . get_current_user_id(), $messages[ $result ], MINUTE_IN_SECONDS );
@@ -258,9 +258,9 @@ class AIVD_Admin {
 		$engines = empty( $settings['engines'] ) ? AIVD_Settings::AI_ENGINES : (array) $settings['engines'];
 		?>
 		<div class="wrap aivd-settings">
-			<h1><?php esc_html_e( 'AI Visibility', 'ai-visibility-dashboard' ); ?></h1>
+			<h1><?php esc_html_e( 'AI Visibility', 'trailseo-ai-visibility' ); ?></h1>
 			<p class="aivd-lead">
-				<?php esc_html_e( 'See on your Dashboard how ChatGPT, Claude, Perplexity and Google AI mention your brand: Share of Voice, mention rate, sentiment, competitors and the sources they cite. The data comes from your Mencoro project.', 'ai-visibility-dashboard' ); ?>
+				<?php esc_html_e( 'See on your Dashboard how ChatGPT, Claude, Perplexity and Google AI mention your brand: Share of Voice, mention rate, sentiment, competitors and the sources they cite. The data comes from your Mencoro project.', 'trailseo-ai-visibility' ); ?>
 			</p>
 
 			<?php if ( is_array( $notice ) && ! empty( $notice['message'] ) ) : ?>
@@ -271,10 +271,10 @@ class AIVD_Admin {
 				<input type="hidden" name="action" value="aivd_save">
 				<?php wp_nonce_field( 'aivd_save' ); ?>
 
-				<h2><?php esc_html_e( '1. Mencoro API key', 'ai-visibility-dashboard' ); ?></h2>
+				<h2><?php esc_html_e( '1. Mencoro API key', 'trailseo-ai-visibility' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><label for="aivd_api_key"><?php esc_html_e( 'API key', 'ai-visibility-dashboard' ); ?></label></th>
+						<th scope="row"><label for="aivd_api_key"><?php esc_html_e( 'API key', 'trailseo-ai-visibility' ); ?></label></th>
 						<td>
 							<?php if ( 'constant' === $key_source || 'env' === $key_source ) : ?>
 								<p>
@@ -282,9 +282,9 @@ class AIVD_Admin {
 									echo esc_html(
 										'constant' === $key_source
 											/* translators: %s: last four characters of the API key. */
-											? sprintf( __( 'Defined in wp-config.php with the MENCORO_API_KEY constant (ends in %s).', 'ai-visibility-dashboard' ), $hint )
+											? sprintf( __( 'Defined in wp-config.php with the MENCORO_API_KEY constant (ends in %s).', 'trailseo-ai-visibility' ), $hint )
 											/* translators: %s: last four characters of the API key. */
-											: sprintf( __( 'Read from the MENCORO_API_KEY environment variable (ends in %s).', 'ai-visibility-dashboard' ), $hint )
+											: sprintf( __( 'Read from the MENCORO_API_KEY environment variable (ends in %s).', 'trailseo-ai-visibility' ), $hint )
 									);
 									?>
 								</p>
@@ -295,41 +295,41 @@ class AIVD_Admin {
 									<p class="description">
 										<?php
 										/* translators: %s: last four characters of the API key. */
-										echo esc_html( sprintf( __( 'A key ending in %s is saved. Leave the field empty to keep it.', 'ai-visibility-dashboard' ), $hint ) );
+										echo esc_html( sprintf( __( 'A key ending in %s is saved. Leave the field empty to keep it.', 'trailseo-ai-visibility' ), $hint ) );
 										?>
 									</p>
-									<p><label><input type="checkbox" name="aivd_remove_key" value="1"> <?php esc_html_e( 'Remove the saved key', 'ai-visibility-dashboard' ); ?></label></p>
+									<p><label><input type="checkbox" name="aivd_remove_key" value="1"> <?php esc_html_e( 'Remove the saved key', 'trailseo-ai-visibility' ); ?></label></p>
 								<?php else : ?>
 									<p class="description">
 										<?php
 										printf(
 											/* translators: %s: link to Mencoro. */
-											esc_html__( 'Create a key in your %s account, under API keys in the user menu. The "read" capability is enough: the plugin never changes anything in Mencoro.', 'ai-visibility-dashboard' ),
+											esc_html__( 'Create a key in your %s account, under API keys in the user menu. The "read" capability is enough: the plugin never changes anything in Mencoro.', 'trailseo-ai-visibility' ),
 											'<a href="https://mencoro.com/" target="_blank" rel="noopener noreferrer">Mencoro</a>'
 										);
 										?>
 									</p>
 								<?php endif; ?>
-								<p class="description"><?php esc_html_e( 'Tip: on shared or client sites, define it in wp-config.php instead: define( \'MENCORO_API_KEY\', \'…\' );', 'ai-visibility-dashboard' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Tip: on shared or client sites, define it in wp-config.php instead: define( \'MENCORO_API_KEY\', \'…\' );', 'trailseo-ai-visibility' ); ?></p>
 							<?php endif; ?>
 						</td>
 					</tr>
 				</table>
 
-				<h2><?php esc_html_e( '2. What to show', 'ai-visibility-dashboard' ); ?></h2>
+				<h2><?php esc_html_e( '2. What to show', 'trailseo-ai-visibility' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
-						<th scope="row"><label for="aivd_project"><?php esc_html_e( 'Project', 'ai-visibility-dashboard' ); ?></label></th>
+						<th scope="row"><label for="aivd_project"><?php esc_html_e( 'Project', 'trailseo-ai-visibility' ); ?></label></th>
 						<td>
 							<?php if ( '' === $key_source ) : ?>
-								<p class="description"><?php esc_html_e( 'Save your API key first to list your projects.', 'ai-visibility-dashboard' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Save your API key first to list your projects.', 'trailseo-ai-visibility' ); ?></p>
 							<?php elseif ( is_wp_error( $projects ) ) : ?>
 								<p class="aivd-error"><?php echo esc_html( $projects->get_error_message() ); ?></p>
 							<?php elseif ( empty( $projects ) ) : ?>
-								<p class="description"><?php esc_html_e( 'This key cannot see any active project yet. Create one in Mencoro and come back.', 'ai-visibility-dashboard' ); ?></p>
+								<p class="description"><?php esc_html_e( 'This key cannot see any active project yet. Create one in Mencoro and come back.', 'trailseo-ai-visibility' ); ?></p>
 							<?php else : ?>
 								<select id="aivd_project" name="aivd_project">
-									<option value=""><?php esc_html_e( '— Choose a project —', 'ai-visibility-dashboard' ); ?></option>
+									<option value=""><?php esc_html_e( '— Choose a project —', 'trailseo-ai-visibility' ); ?></option>
 									<?php
 									$current_org = null;
 									foreach ( $projects as $project ) {
@@ -350,47 +350,47 @@ class AIVD_Admin {
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'AI engines', 'ai-visibility-dashboard' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'AI engines', 'trailseo-ai-visibility' ); ?></th>
 						<td>
 							<fieldset>
-								<legend class="screen-reader-text"><?php esc_html_e( 'AI engines', 'ai-visibility-dashboard' ); ?></legend>
+								<legend class="screen-reader-text"><?php esc_html_e( 'AI engines', 'trailseo-ai-visibility' ); ?></legend>
 								<?php foreach ( self::engine_labels() as $code => $label ) : ?>
 									<label class="aivd-check"><input type="checkbox" name="aivd_engines[]" value="<?php echo esc_attr( $code ); ?>" <?php checked( in_array( $code, $engines, true ) ); ?>> <?php echo esc_html( $label ); ?></label>
 								<?php endforeach; ?>
-								<p class="description"><?php esc_html_e( 'Only the engines your project tracks in Mencoro are used. Google classic results and Shopping are left out on purpose.', 'ai-visibility-dashboard' ); ?></p>
+								<p class="description"><?php esc_html_e( 'Only the engines your project tracks in Mencoro are used. Google classic results and Shopping are left out on purpose.', 'trailseo-ai-visibility' ); ?></p>
 							</fieldset>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><label for="aivd_range"><?php esc_html_e( 'Default period', 'ai-visibility-dashboard' ); ?></label></th>
+						<th scope="row"><label for="aivd_range"><?php esc_html_e( 'Default period', 'trailseo-ai-visibility' ); ?></label></th>
 						<td>
 							<select id="aivd_range" name="aivd_range">
 								<?php foreach ( AIVD_Settings::RANGES as $days ) : ?>
 									<option value="<?php echo esc_attr( (string) $days ); ?>" <?php selected( AIVD_Settings::range(), $days ); ?>>
 										<?php
 										/* translators: %d: number of days. */
-										echo esc_html( sprintf( _n( 'Last %d day', 'Last %d days', $days, 'ai-visibility-dashboard' ), $days ) );
+										echo esc_html( sprintf( _n( 'Last %d day', 'Last %d days', $days, 'trailseo-ai-visibility' ), $days ) );
 										?>
 									</option>
 								<?php endforeach; ?>
 							</select>
-							<p class="description"><?php esc_html_e( 'Trends compare with the previous period of the same length.', 'ai-visibility-dashboard' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Trends compare with the previous period of the same length.', 'trailseo-ai-visibility' ); ?></p>
 						</td>
 					</tr>
 					<tr>
-						<th scope="row"><?php esc_html_e( 'Who sees the widget', 'ai-visibility-dashboard' ); ?></th>
+						<th scope="row"><?php esc_html_e( 'Who sees the widget', 'trailseo-ai-visibility' ); ?></th>
 						<td>
 							<fieldset>
-								<legend class="screen-reader-text"><?php esc_html_e( 'Who sees the widget', 'ai-visibility-dashboard' ); ?></legend>
-								<label class="aivd-check"><input type="radio" name="aivd_audience" value="administrators" <?php checked( 'editors' !== $settings['audience'] ); ?>> <?php esc_html_e( 'Administrators', 'ai-visibility-dashboard' ); ?></label>
-								<label class="aivd-check"><input type="radio" name="aivd_audience" value="editors" <?php checked( 'editors' === $settings['audience'] ); ?>> <?php esc_html_e( 'Editors and administrators', 'ai-visibility-dashboard' ); ?></label>
-								<p class="description"><?php esc_html_e( 'Handy for agencies: let the client\'s editors see their AI visibility without access to the settings or the key.', 'ai-visibility-dashboard' ); ?></p>
+								<legend class="screen-reader-text"><?php esc_html_e( 'Who sees the widget', 'trailseo-ai-visibility' ); ?></legend>
+								<label class="aivd-check"><input type="radio" name="aivd_audience" value="administrators" <?php checked( 'editors' !== $settings['audience'] ); ?>> <?php esc_html_e( 'Administrators', 'trailseo-ai-visibility' ); ?></label>
+								<label class="aivd-check"><input type="radio" name="aivd_audience" value="editors" <?php checked( 'editors' === $settings['audience'] ); ?>> <?php esc_html_e( 'Editors and administrators', 'trailseo-ai-visibility' ); ?></label>
+								<p class="description"><?php esc_html_e( 'Handy for agencies: let the client\'s editors see their AI visibility without access to the settings or the key.', 'trailseo-ai-visibility' ); ?></p>
 							</fieldset>
 						</td>
 					</tr>
 				</table>
 
-				<?php submit_button( __( 'Save and check connection', 'ai-visibility-dashboard' ) ); ?>
+				<?php submit_button( __( 'Save and check connection', 'trailseo-ai-visibility' ) ); ?>
 			</form>
 
 			<?php
@@ -399,28 +399,28 @@ class AIVD_Admin {
 			}
 			?>
 
-			<h2><?php esc_html_e( 'External service and privacy', 'ai-visibility-dashboard' ); ?></h2>
+			<h2><?php esc_html_e( 'External service and privacy', 'trailseo-ai-visibility' ); ?></h2>
 			<div class="aivd-privacy">
 				<p>
 					<?php
 					printf(
 						/* translators: %s: API host name. */
-						esc_html__( 'This plugin shows data from Mencoro, an external service. It only talks to %s, with your key and in read-only mode, and only from the admin.', 'ai-visibility-dashboard' ),
+						esc_html__( 'This plugin shows data from Mencoro, an external service. It only talks to %s, with your key and in read-only mode, and only from the admin.', 'trailseo-ai-visibility' ),
 						'<code>' . esc_html( (string) wp_parse_url( AIVD_API::base_url(), PHP_URL_HOST ) ) . '</code>'
 					);
 					?>
 				</p>
 				<ul>
-					<li><?php esc_html_e( 'What is sent: your API key (in a request header), the organization and project chosen, the period and the AI engines. Nothing about your site, its content, its users or its visitors.', 'ai-visibility-dashboard' ); ?></li>
-					<li><?php esc_html_e( 'When: when you save this screen, when you open it to list your projects, when the Dashboard data is out of date (every 6 hours by default) and when someone clicks Refresh.', 'ai-visibility-dashboard' ); ?></li>
-					<li><?php esc_html_e( 'What is stored here: these settings and the last figures received, never your visitors\' data. Deleting the plugin removes all of it.', 'ai-visibility-dashboard' ); ?></li>
-					<li><?php esc_html_e( 'Nothing is added to the front end, no external scripts are loaded and no usage data is collected.', 'ai-visibility-dashboard' ); ?></li>
+					<li><?php esc_html_e( 'What is sent: your API key (in a request header), the organization and project chosen, the period and the AI engines. Nothing about your site, its content, its users or its visitors.', 'trailseo-ai-visibility' ); ?></li>
+					<li><?php esc_html_e( 'When: when you save this screen, when you open it to list your projects, when the Dashboard data is out of date (every 6 hours by default) and when someone clicks Refresh.', 'trailseo-ai-visibility' ); ?></li>
+					<li><?php esc_html_e( 'What is stored here: these settings and the last figures received, never your visitors\' data. Deleting the plugin removes all of it.', 'trailseo-ai-visibility' ); ?></li>
+					<li><?php esc_html_e( 'Nothing is added to the front end, no external scripts are loaded and no usage data is collected.', 'trailseo-ai-visibility' ); ?></li>
 				</ul>
 				<p>
 					<?php
 					printf(
 						/* translators: %s: link to the Mencoro legal page. */
-						esc_html__( 'Mencoro terms of use and privacy policy: %s. This plugin is independent and is not made by Mencoro.', 'ai-visibility-dashboard' ),
+						esc_html__( 'Mencoro terms of use and privacy policy: %s. This plugin is independent and is not made by Mencoro.', 'trailseo-ai-visibility' ),
 						'<a href="https://mencoro.com/legal/" target="_blank" rel="noopener noreferrer">mencoro.com/legal</a>'
 					);
 					?>
@@ -437,30 +437,30 @@ class AIVD_Admin {
 	private static function render_status() {
 		$state  = AIVD_Data::peek( AIVD_Settings::range() );
 		$labels = array(
-			'fresh'   => __( 'Up to date', 'ai-visibility-dashboard' ),
-			'partial' => __( 'Up to date, some sections missing', 'ai-visibility-dashboard' ),
-			'empty'   => __( 'Connected, no data in this period yet', 'ai-visibility-dashboard' ),
-			'stale'   => __( 'Out of date, update pending', 'ai-visibility-dashboard' ),
-			'pending' => __( 'Fetching', 'ai-visibility-dashboard' ),
-			'error'   => __( 'Not updated yet', 'ai-visibility-dashboard' ),
+			'fresh'   => __( 'Up to date', 'trailseo-ai-visibility' ),
+			'partial' => __( 'Up to date, some sections missing', 'trailseo-ai-visibility' ),
+			'empty'   => __( 'Connected, no data in this period yet', 'trailseo-ai-visibility' ),
+			'stale'   => __( 'Out of date, update pending', 'trailseo-ai-visibility' ),
+			'pending' => __( 'Fetching', 'trailseo-ai-visibility' ),
+			'error'   => __( 'Not updated yet', 'trailseo-ai-visibility' ),
 		);
 		$format = get_option( 'date_format' ) . ' ' . get_option( 'time_format' );
 		$rows   = array(
-			__( 'Status', 'ai-visibility-dashboard' )      => isset( $labels[ $state['status'] ] ) ? $labels[ $state['status'] ] : $state['status'],
-			__( 'Last update', 'ai-visibility-dashboard' ) => $state['fetched_at'] ? wp_date( $format, $state['fetched_at'] ) : __( 'Never', 'ai-visibility-dashboard' ),
+			__( 'Status', 'trailseo-ai-visibility' )      => isset( $labels[ $state['status'] ] ) ? $labels[ $state['status'] ] : $state['status'],
+			__( 'Last update', 'trailseo-ai-visibility' ) => $state['fetched_at'] ? wp_date( $format, $state['fetched_at'] ) : __( 'Never', 'trailseo-ai-visibility' ),
 		);
 		if ( $state['error'] instanceof WP_Error && 'aivd_pending' !== $state['error']->get_error_code() ) {
-			$rows[ __( 'Last error', 'ai-visibility-dashboard' ) ] = $state['error']->get_error_message();
+			$rows[ __( 'Last error', 'trailseo-ai-visibility' ) ] = $state['error']->get_error_message();
 		}
 		if ( $state['retry_at'] > time() ) {
-			$rows[ __( 'Next automatic attempt', 'ai-visibility-dashboard' ) ] = wp_date( $format, $state['retry_at'] );
+			$rows[ __( 'Next automatic attempt', 'trailseo-ai-visibility' ) ] = wp_date( $format, $state['retry_at'] );
 		}
-		$rows[ __( 'Background updates', 'ai-visibility-dashboard' ) ] = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON
-			? __( 'WP-Cron is disabled on this site: updates run when your server calls wp-cron.php, or when someone clicks Refresh.', 'ai-visibility-dashboard' )
-			: __( 'Handled by WP-Cron. The Dashboard never waits for Mencoro when it has data to show.', 'ai-visibility-dashboard' );
-		$rows[ __( 'Plugin version', 'ai-visibility-dashboard' ) ]     = AIVD_VERSION;
+		$rows[ __( 'Background updates', 'trailseo-ai-visibility' ) ] = defined( 'DISABLE_WP_CRON' ) && DISABLE_WP_CRON
+			? __( 'WP-Cron is disabled on this site: updates run when your server calls wp-cron.php, or when someone clicks Refresh.', 'trailseo-ai-visibility' )
+			: __( 'Handled by WP-Cron. The Dashboard never waits for Mencoro when it has data to show.', 'trailseo-ai-visibility' );
+		$rows[ __( 'Plugin version', 'trailseo-ai-visibility' ) ]     = AIVD_VERSION;
 		?>
-		<h2><?php esc_html_e( 'Connection status', 'ai-visibility-dashboard' ); ?></h2>
+		<h2><?php esc_html_e( 'Connection status', 'trailseo-ai-visibility' ); ?></h2>
 		<table class="widefat striped aivd-status-table" role="presentation">
 			<tbody>
 				<?php foreach ( $rows as $label => $value ) : ?>

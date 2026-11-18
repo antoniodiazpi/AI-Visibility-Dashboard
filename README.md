@@ -1,4 +1,4 @@
-# AI Visibility Dashboard for Mencoro
+# TrailSEO AI Visibility for Mencoro
 
 **See how ChatGPT, Claude, Perplexity and Google AI talk about your brand — right in the WordPress dashboard.**
 
@@ -40,10 +40,12 @@ Engines: ChatGPT, Claude, Perplexity, Google AI Overviews and Google AI Mode —
 
 ## Install
 
-1. Download the latest release zip (or clone this repository into `wp-content/plugins/ai-visibility-dashboard`).
+1. Download the latest release zip (or clone this repository into `wp-content/plugins/trailseo-ai-visibility`).
 2. In WordPress, go to **Plugins → Add New → Upload Plugin**, upload the zip and activate it.
 3. Go to **Settings → AI Visibility**, paste your API key and click **Save and check connection**.
 4. Choose your project, save, and open the **Dashboard**.
+
+**Upgrading from 1.0.0 or 1.0.1 installed from GitHub?** The plugin was renamed in 1.0.2 and now lives in the `trailseo-ai-visibility` folder. Deactivate the old version, install and activate the new one (your settings are kept), then remove the old `ai-visibility-dashboard` folder by hand. Don't use **Delete** on the old version: it would erase the settings both versions share.
 
 <p align="center"><img src=".wordpress-org/screenshot-2.png" alt="Settings screen: API key, project, AI engines, default period and who sees the widget" width="720"></p>
 
@@ -86,9 +88,9 @@ Coding standards, PHPCompatibility (PHP 7.4+) and a PHPUnit suite on the WordPre
 
 ## Translations
 
-Source strings are in English. The text domain is `ai-visibility-dashboard`; a `.pot` template and a Spanish (Spain) translation live in `languages/`.
+Source strings are in English. The text domain is `trailseo-ai-visibility`; a `.pot` template and a Spanish (Spain) translation live in `languages/`.
 
-On sites that install the plugin from WordPress.org, WordPress loads translations automatically from the language packs of [translate.wordpress.org](https://translate.wordpress.org/), which is also where new languages are contributed. On installs from this repository, copy `languages/ai-visibility-dashboard-es_ES.mo` and `.l10n.php` to `wp-content/languages/plugins/` to get Spanish.
+On sites that install the plugin from WordPress.org, WordPress loads translations automatically from the language packs of [translate.wordpress.org](https://translate.wordpress.org/), which is also where new languages are contributed. On installs from this repository, copy `languages/trailseo-ai-visibility-es_ES.mo` and `.l10n.php` to `wp-content/languages/plugins/` to get Spanish.
 
 ## License
 

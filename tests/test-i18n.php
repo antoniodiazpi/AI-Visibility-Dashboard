@@ -18,7 +18,7 @@ class Test_AIVD_I18n extends AIVD_Test_Case {
 	 * @return array
 	 */
 	private function messages() {
-		$file = include dirname( __DIR__ ) . '/languages/ai-visibility-dashboard-es_ES.l10n.php';
+		$file = include dirname( __DIR__ ) . '/languages/trailseo-ai-visibility-es_ES.l10n.php';
 		return $file['messages'];
 	}
 
@@ -39,7 +39,7 @@ class Test_AIVD_I18n extends AIVD_Test_Case {
 	}
 
 	public function test_every_source_string_is_translated() {
-		$pot = file_get_contents( dirname( __DIR__ ) . '/languages/ai-visibility-dashboard.pot' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file.
+		$pot = file_get_contents( dirname( __DIR__ ) . '/languages/trailseo-ai-visibility.pot' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file.
 		preg_match_all( '/^msgid "(.+)"$/m', $pot, $m );
 		$messages = $this->messages();
 		$missing  = array();
@@ -75,9 +75,9 @@ class Test_AIVD_I18n extends AIVD_Test_Case {
 	}
 
 	public function test_spanish_is_loaded_for_spanish_sites() {
-		$this->assertTrue( load_textdomain( 'ai-visibility-dashboard', dirname( __DIR__ ) . '/languages/ai-visibility-dashboard-es_ES.mo' ) );
+		$this->assertTrue( load_textdomain( 'trailseo-ai-visibility', dirname( __DIR__ ) . '/languages/trailseo-ai-visibility-es_ES.mo' ) );
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- Checks the translation itself.
-		$this->assertSame( 'Últimos datos disponibles, de hace %s.', __( 'Last data available, from %s ago.', 'ai-visibility-dashboard' ) );
-		unload_textdomain( 'ai-visibility-dashboard' );
+		$this->assertSame( 'Últimos datos disponibles, de hace %s.', __( 'Last data available, from %s ago.', 'trailseo-ai-visibility' ) );
+		unload_textdomain( 'trailseo-ai-visibility' );
 	}
 }

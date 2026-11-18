@@ -9,8 +9,8 @@ Cómo está hecho el plugin, cómo ampliarlo y cómo contribuir.
 Sin compilación, sin dependencias en ejecución, sin JavaScript. PHP 7.4+, WordPress 6.5+. Composer solo se usa para las herramientas de desarrollo (PHPCS, PHPUnit).
 
 ```
-ai-visibility-dashboard/
-├── ai-visibility-dashboard.php   Arranque: constantes, activación y desactivación, enlace de ajustes
+trailseo-ai-visibility/
+├── trailseo-ai-visibility.php   Arranque: constantes, activación y desactivación, enlace de ajustes
 ├── includes/
 │   ├── class-aivd-settings.php   Ajustes guardados, origen de la clave, permiso, vaciado de caché
 │   ├── class-aivd-api.php        Cliente HTTP de solo lectura para la API de Mencoro
@@ -149,18 +149,18 @@ Normas de la casa: escapar al final, sanear al principio, nonces y comprobación
 
 ## Traducciones
 
-Los textos de origen están en inglés; el dominio de texto es `ai-visibility-dashboard`. Con WP-CLI:
+Los textos de origen están en inglés; el dominio de texto es `trailseo-ai-visibility`. Con WP-CLI:
 
 ```bash
-wp i18n make-pot . languages/ai-visibility-dashboard.pot --exclude=languages,docs
-# traduce languages/ai-visibility-dashboard-{locale}.po y después:
+wp i18n make-pot . languages/trailseo-ai-visibility.pot --exclude=languages,docs
+# traduce languages/trailseo-ai-visibility-{locale}.po y después:
 wp i18n make-mo languages
 wp i18n make-php languages
 ```
 
 Sube los archivos `.po`, `.mo` y `.l10n.php`. El español de España tutea, como la traducción oficial de WordPress (es_ES).
 
-El plugin no llama a `load_plugin_textdomain()`: como se recomienda para los plugins alojados en WordPress.org, WordPress carga sobre la marcha los paquetes de idioma de translate.wordpress.org. El `.po` de `languages/` es el que hay que importar allí (español de España, proyecto *AI Visibility Dashboard for Mencoro*). En instalaciones desde GitHub, los archivos `.mo` y `.l10n.php` funcionan si se copian a `wp-content/languages/plugins/`.
+El plugin no llama a `load_plugin_textdomain()`: como se recomienda para los plugins alojados en WordPress.org, WordPress carga sobre la marcha los paquetes de idioma de translate.wordpress.org. El `.po` de `languages/` es el que hay que importar allí (español de España, proyecto *TrailSEO AI Visibility for Mencoro*). En instalaciones desde GitHub, los archivos `.mo` y `.l10n.php` funcionan si se copian a `wp-content/languages/plugins/`.
 
 ## Tests
 
@@ -171,7 +171,7 @@ Consulta [CONTRIBUTING.md](../../CONTRIBUTING.md): `bin/install-wp-tests.sh` pre
 Los archivos de desarrollo (`docs/`, `tests/`, `bin/`, `.github/`, `.wordpress-org/`, los README y los archivos de Composer y PHPUnit) están marcados como `export-ignore` en `.gitattributes`, así que el zip que GitHub genera para una etiqueta, y `git archive`, solo contienen el plugin:
 
 ```bash
-git archive --format=zip --prefix=ai-visibility-dashboard/ -o ai-visibility-dashboard-1.0.1.zip v1.0.1
+git archive --format=zip --prefix=trailseo-ai-visibility/ -o trailseo-ai-visibility-1.0.2.zip v1.0.2
 ```
 
 Antes de etiquetar: sube `Version` en la cabecera del plugin, `AIVD_VERSION` y `Stable tag` en `readme.txt`, añade la entrada al registro de cambios y el aviso de actualización, regenera las traducciones y pasa Plugin Check al zip.
