@@ -1,0 +1,90 @@
+name: Deploy to WordPress.org
+
+# Publishes the plugin to its SVN repository on WordPress.org: the code of the
+# release tag goes to trunk/ and tags/X.Y.Z/, and .wordpress-org/ to assets/
+# (icon, banner, screenshots). The package honours .gitattributes, so SVN gets
+# exactly the files of the release zip.
+#
+# Runs after every Release run on main, and by hand (Actions → Deploy to
+# WordPress.org → Run workflow). It deploys the version in readme.txt (Stable
+# tag) once it has a GitHub release, and leaves alone a version that is
+# already in SVN, so it never publishes twice.
+#
+# Needs the SVN_USERNAME and SVN_PASSWORD repository secrets (the SVN password
+# from the WordPress.org profile, not the account password).
+
+on:
+  workflow_run:
+    workflows: [Release]
+    types: [completed]
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-wporg
+  cancel-in-progress: false
+
+env:
+  SLUG: trailseo-ai-visibility
+
+jobs:
+  deploy:
+    if: github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.sha }}
+          fetch-depth: 0
+
+      - name: Find the version to deploy
+        id: plan
+        env:
+          GH_TOKEN: ${{ github.token }}
+          SVN_READY: ${{ secrets.SVN_USERNAME != '' && secrets.SVN_PASSWORD != '' }}
+        run: |
+          VERSION=$(sed -n 's/^Stable tag: *//p' readme.txt)
+          if ! printf '%s' "$VERSION" | grep -Eq '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "::error::Stable tag '$VERSION' is not a version like 1.2.3"; exit 1
+          fi
+          if [ "$SVN_READY" != "true" ]; then
+            echo "::error::Set the SVN_USERNAME and SVN_PASSWORD repository secrets"; exit 1
+          fi
+          if ! gh release view "v$VERSION" >/dev/null 2>&1; then
+            echo "v$VERSION has no GitHub release yet: nothing to deploy."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          CODE=$(curl -s -o /dev/null -w '%{http_code}' "https://plugins.svn.wordpress.org/$SLUG/tags/$VERSION/")
+          if [ "$CODE" = "200" ]; then
+            echo "$VERSION is already on WordPress.org: nothing to deploy."
+            echo "deploy=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          echo "Deploying $VERSION (tags/$VERSION answered HTTP $CODE)."
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "deploy=true" >> "$GITHUB_OUTPUT"
+
+      - name: Check out the released code
+        if: steps.plan.outputs.deploy == 'true'
+        env:
+          VERSION: ${{ steps.plan.outputs.version }}
+        run: |
+          git checkout --quiet "v$VERSION"
+          HEADER=$(sed -n 's/^ \* Version: *//p' "$SLUG.php")
+          STABLE=$(sed -n 's/^Stable tag: *//p' readme.txt)
+          if [ "$HEADER" != "$VERSION" ] || [ "$STABLE" != "$VERSION" ]; then
+            echo "::error::v$VERSION has header $HEADER and Stable tag $STABLE"; exit 1
+          fi
+          find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l > /dev/null
+          git archive HEAD | tar -t | sort
+
+      - name: Publish to WordPress.org SVN
+        if: steps.plan.outputs.deploy == 'true'
+        uses: 10up/action-wordpress-plugin-deploy@54bd289b8525fd23a5c365ec369185f2966529c2 # 2.3.0
+        env:
+          SVN_USERNAME: ${{ secrets.SVN_USERNAME }}
+          SVN_PASSWORD: ${{ secrets.SVN_PASSWORD }}
+          VERSION: ${{ steps.plan.outputs.version }}
+          ASSETS_DIR: .wordpress-org
