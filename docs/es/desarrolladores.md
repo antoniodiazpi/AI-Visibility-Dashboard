@@ -176,6 +176,8 @@ git archive --format=zip --prefix=trailseo-ai-visibility/ -o trailseo-ai-visibil
 
 Antes de etiquetar: sube `Version` en la cabecera del plugin, `AIVD_VERSION` y `Stable tag` en `readme.txt`, añade la entrada al registro de cambios y el aviso de actualización, regenera las traducciones y pasa Plugin Check al zip.
 
+Publicar es automático: cuando la CI pasa en `main` y el Stable tag de `readme.txt` aún no tiene release en GitHub, el flujo **Release** genera el zip y publica la release; después **Deploy to WordPress.org** sube esa release al SVN del plugin (`trunk/`, `tags/X.Y.Z/` y `assets/`). Los dos se saltan una versión ya publicada. Para subir al SVN hacen falta los secrets del repositorio `SVN_USERNAME` y `SVN_PASSWORD` (la contraseña de SVN del perfil de WordPress.org). Así que publicar una versión es: subir la versión en los tres sitios, añadir la entrada del registro de cambios y fusionar.
+
 Las imágenes de WordPress.org (icono, banner, capturas) están en `.wordpress-org/`. Van en la carpeta `assets/` de primer nivel del repositorio SVN, junto a `trunk/` y `tags/`, nunca dentro del plugin.
 
 ## Contribuir

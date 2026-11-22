@@ -176,6 +176,8 @@ git archive --format=zip --prefix=trailseo-ai-visibility/ -o trailseo-ai-visibil
 
 Before tagging: bump `Version` in the plugin header, `AIVD_VERSION`, `Stable tag` in `readme.txt`, add a changelog entry and an upgrade notice, regenerate the translations, and run Plugin Check on the zip.
 
+Releasing is automatic: when CI passes on `main` and the Stable tag of `readme.txt` has no GitHub release yet, the **Release** workflow builds the zip and publishes the release; then **Deploy to WordPress.org** commits that release to the plugin's SVN (`trunk/`, `tags/X.Y.Z/` and `assets/`). Both skip a version that is already published. Deploying needs the `SVN_USERNAME` and `SVN_PASSWORD` repository secrets (the SVN password from the WordPress.org profile). So a release is: bump the version in the three places, add the changelog entry, merge.
+
 WordPress.org images (icon, banner, screenshots) live in `.wordpress-org/`. They go in the top-level `assets/` folder of the SVN repository, next to `trunk/` and `tags/`, never inside the plugin.
 
 ## Contributing
