@@ -13,12 +13,27 @@
 class Test_AIVD_I18n extends AIVD_Test_Case {
 
 	/**
-	 * Bundled Spanish messages.
+	 * Locales kept in languages/ as the source for translate.wordpress.org.
 	 *
 	 * @return array
 	 */
-	private function messages() {
-		$file = include dirname( __DIR__ ) . '/languages/trailseo-ai-visibility-es_ES.l10n.php';
+	public function locales() {
+		return array(
+			'Spanish (Spain)'       => array( 'es_ES' ),
+			'Portuguese (Portugal)' => array( 'pt_PT' ),
+		);
+	}
+
+	/**
+	 * Messages of a locale.
+	 *
+	 * @param string $locale Locale.
+	 * @return array
+	 */
+	private function messages( $locale ) {
+		$file = include dirname( __DIR__ ) . '/languages/trailseo-ai-visibility-' . $locale . '.l10n.php';
+		$this->assertSame( 'trailseo-ai-visibility', $file['domain'] );
+		$this->assertSame( $locale, $file['language'] );
 		return $file['messages'];
 	}
 
@@ -38,10 +53,15 @@ class Test_AIVD_I18n extends AIVD_Test_Case {
 		return $out;
 	}
 
-	public function test_every_source_string_is_translated() {
+	/**
+	 * @dataProvider locales
+	 *
+	 * @param string $locale Locale.
+	 */
+	public function test_every_source_string_is_translated( $locale ) {
 		$pot = file_get_contents( dirname( __DIR__ ) . '/languages/trailseo-ai-visibility.pot' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents -- Local file.
 		preg_match_all( '/^msgid "(.+)"$/m', $pot, $m );
-		$messages = $this->messages();
+		$messages = $this->messages( $locale );
 		$missing  = array();
 		foreach ( $m[1] as $id ) {
 			$id    = stripcslashes( $id );
@@ -61,8 +81,13 @@ class Test_AIVD_I18n extends AIVD_Test_Case {
 		$this->assertSame( array(), $missing );
 	}
 
-	public function test_translations_keep_their_placeholders() {
-		foreach ( $this->messages() as $source => $translation ) {
+	/**
+	 * @dataProvider locales
+	 *
+	 * @param string $locale Locale.
+	 */
+	public function test_translations_keep_their_placeholders( $locale ) {
+		foreach ( $this->messages( $locale ) as $source => $translation ) {
 			$sources      = explode( "\0", $source );
 			$translations = explode( "\0", $translation );
 			$expected     = self::placeholders( end( $sources ) );
@@ -78,6 +103,15 @@ class Test_AIVD_I18n extends AIVD_Test_Case {
 		$this->assertTrue( load_textdomain( 'trailseo-ai-visibility', dirname( __DIR__ ) . '/languages/trailseo-ai-visibility-es_ES.mo' ) );
 		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- Checks the translation itself.
 		$this->assertSame( 'Últimos datos disponibles, de hace %s.', __( 'Last data available, from %s ago.', 'trailseo-ai-visibility' ) );
+		unload_textdomain( 'trailseo-ai-visibility' );
+	}
+
+	public function test_portuguese_is_loaded_for_portuguese_sites() {
+		$this->assertTrue( load_textdomain( 'trailseo-ai-visibility', dirname( __DIR__ ) . '/languages/trailseo-ai-visibility-pt_PT.mo' ) );
+		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- Checks the translation itself.
+		$this->assertSame( 'Últimos dados disponíveis, de há %s.', __( 'Last data available, from %s ago.', 'trailseo-ai-visibility' ) );
+		// phpcs:ignore WordPress.WP.I18n.MissingTranslatorsComment -- Checks the translation itself.
+		$this->assertSame( 'Últimos %d dias', _n( 'Last %d day', 'Last %d days', 7, 'trailseo-ai-visibility' ) );
 		unload_textdomain( 'trailseo-ai-visibility' );
 	}
 }
